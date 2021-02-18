@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">BuyExpress </string>
+    <string name="appVersion">1.1</string>
+    <string name="token">A1548S968D2563</string>
+    <string name="message_successful_connexion">Connexion au service réussie ! :D </string>
+    <string name="message_unsuccessful_connexion">Problème de connexion au service :/  </string>
+    <string name="error_message_no_internet">Vous n\'êtes pas connectés à Internet, réessayez une fois connecté !</string>
+    <string name="URL">https://tryagain.dynamic-dns.net/</string>
+    <string name="ip">tryagain.dynamic-dns.net</string>
+    <integer name="port">443</integer>
+    <string name="error_message_no_internet_but_network"> Vous êtes connectés à un réseau sans Internet...Changez de réseau !</string>
+</resources>
