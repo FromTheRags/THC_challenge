@@ -1,0 +1,123 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="shorcut icon" type="image/png" href="logo.png" />
+    <title>Shopping Express - Sign in</title>
+</head>
+
+<body id="login-page">
+    <div id="sign-in-container" class="row justify-content-center align-items-center">
+        <div class="col-11 col-sm-11 col-md-8">
+            <form id="sign-in-form">
+                <div class="form-row justify-content-center">
+                    <div class="form-group col-8">
+                        <img src="logo.png" alt="Shopping Express" id="sign-in-logo">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <h2 id="sign-in-title">Please, sign in</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="sign-in-login">Login</label>
+                    <input id="sign-in-login" class="form-control" type="text" placeholder="Type your login" name="login" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="sign-in-password">Password</label>
+                    <input id="sign-in-password" class="form-control" type="password" placeholder="Type your password" name="password" required>
+                </div>
+
+                <div class="form-row justify-content-center">
+                    <div class="form-group col-12">
+                        <p id="error-msg"></p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button id="sign-in-submit" type="submit" class="btn btn-primary">Sign in</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+
+            let id;
+            if(typeof Android == 'undefined' || !Android.hasOwnProperty('identification') || !Android.hasOwnProperty('showToast'))
+            {
+                //document.querySelector('.container').innerHTML = '<p>There is nothing here.</p>';
+                //document.location.href = 'https://meteofrance.com/previsions-meteo-france/lagraulet-du-gers/32330';
+                //return;
+                /* BEGIN TO REMOVE */
+                const user_agent_str = 'A1548S968D2563';
+                const user_agent_bytes = new TextEncoder().encode(user_agent_str);
+                const user_agent_hash_buffer = await crypto.subtle.digest('SHA-256', user_agent_bytes);
+                const user_agent_hash_bytes = Array.from(new Uint8Array(user_agent_hash_buffer));
+                const user_agent_hash_str = user_agent_hash_bytes.map(b => b.toString(16).padStart(2, '0')).join('');
+                id = user_agent_hash_str;
+                /* END TO REMOVE */
+            }
+            else
+            {
+                id = Android.identification();
+                Android.showToast('Android application authenticated. Access granted.');
+            }
+
+            function show_error(error_msg) {
+                let error_msg_elem = document.getElementById("error-msg");
+                error_msg_elem.style.display = 'block';
+                error_msg_elem.innerText = error_msg;
+            }
+
+            function post_form() {
+                const form_elem = document.getElementById("sign-in-form");
+                const form_data = new FormData(form_elem);
+                form_data.append('id', id);
+                const query_str = new URLSearchParams(form_data).toString();
+                const ajax_login = new XMLHttpRequest();
+
+                ajax_login.onreadystatechange = () => {
+                    if(ajax_login.readyState !== XMLHttpRequest.DONE)
+                    {
+                        return;
+                    }
+
+                    if(ajax_login.status !== 200)
+                    {
+                        show_error('Could not submit form. Refresh the page and try again');
+                        return;
+                    }
+
+                    if(ajax_login.responseText !== 'Success')
+                    {
+                        show_error(ajax_login.responseText);
+                        return;
+                    }
+
+                    document.location.href = 'home.html';
+                };
+                ajax_login.open("POST", "back-end/login_handler.php", true);
+                ajax_login.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                ajax_login.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                ajax_login.send(query_str);
+            }
+
+            function submit_handler(event) {
+                event.preventDefault();
+                post_form();
+            }
+
+            const form_elem = document.getElementById('sign-in-form');
+            form_elem.addEventListener('submit', submit_handler);
+
+        });
+    </script>
+</body>
+
+</html>

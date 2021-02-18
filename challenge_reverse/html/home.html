@@ -1,0 +1,183 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" media="screen" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="shorcut icon" type="image/png" href="logo.png" />
+    <title>Shopping Express - Home</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light justify-content-between">
+        <a class="navbar-brand">Products</a>
+        <div class="btn-group">
+            <button id="profile-login" type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">Loading...</button>
+            <div id="profile-dropdown" class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item click-disabled"><b>Brief description</b></a>
+                <span id="profile-description" class="dropdown-item click-disabled"></span>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="javascript:sign_out();"><b>Sign out</b></a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="products-wrapper">
+        <div id="products-container" class="card-columns">
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        function sign_out() {
+            const ajax_logout = new XMLHttpRequest();
+            ajax_logout.open('GET', 'back-end/log_out.php');
+            ajax_logout.onreadystatechange = () => {
+                if(ajax_logout.readyState !== XMLHttpRequest.DONE)
+                {
+                    return;
+                }
+                document.location.href = 'login.html';
+            };
+            ajax_logout.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            ajax_logout.send();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            function show_products(products_data) {
+                const products_elem = document.getElementById('products-container');
+                for(const product of products_data)
+                {
+                    const img_src = 'images/img_' + product['ProductId'].padStart(4, "0") + '.png';
+                    const free = parseFloat(product['Price']) === 0;
+                    const available = parseInt(product['QuantityAvailable']) > 0;
+                    const button_text = free ? 'Get for free' : 'Buy for ' + product['Price'].replace(".", ",") + ' €';
+                    products_elem.innerHTML = products_elem.innerHTML +
+                        '<div class="card">' +
+                        '   <img class="product-img card-img-top" src="' + img_src + '">' +
+                        '   <div class="card-body">' +
+                        '      <div class="card-title row">' +
+                        '          <h5 class="col-7">' + product['Name'] + '</h5>' +
+                        '          <p class="col-5">Qty : <input class="input-qty" type="number" value="' + (available ? '1' : '0') + '" min="' + (available ? '1' : '0') + '" max="' + product['QuantityAvailable'] + '" ' + (available ? '' : 'disabled ') + ' required/></p>' +
+                        '      </div>' +
+                        '      <p class="card-text">' + product['Description'] + '</p>' +
+                        '      <p class="card-text product-warning-msg"' + (parseInt(product['QuantityAvailable']) < 10 ? ' style="display: block"' : '') + '>' + (available ? ('Only ' + product['QuantityAvailable'] + ' remaining') : 'Out of stock') + '</p>' +
+                        '      <button data-product-id="' + product['ProductId'] + '" class="buy-button btn ' + (available ? (free ? 'btn-success' : 'btn-primary') : 'btn-secondary') + '"' + (available ? '' : ' disabled') + '>' + button_text + '</button>' +
+                        '   </div>' +
+                        '</div>';
+                }
+                document.querySelectorAll('.input-qty').forEach(e => e.addEventListener('change', () => {
+                    let button_element = e.parentElement.parentElement.parentElement.querySelector('.buy-button');
+                    if(button_element.innerHTML.endsWith(')'))
+                    {
+                        button_element.innerHTML = button_element.innerHTML.split(' (')[0];
+                    }
+                    if(parseInt(e.value) > 1)
+                    {
+                        button_element.innerHTML += ' (x' + e.value + ')';
+                    }
+                }));
+                document.querySelectorAll('.buy-button').forEach(e => e.addEventListener('click', () => {
+                    const product_id = e.dataset.productId;
+                    let quantity = e.parentElement.querySelector('.input-qty').value;
+                    if(parseInt(quantity) < 1) quantity = '1';
+                    const ajax_buy = new XMLHttpRequest();
+                    ajax_buy.open('GET', 'back-end/buy_product.php?id=' + product_id + '&quantity=' + quantity);
+                    ajax_buy.onreadystatechange = () => {
+                        if(ajax_buy.readyState !== XMLHttpRequest.DONE)
+                        {
+                            return;
+                        }
+
+                        const product_warning_element = e.parentElement.querySelector('.product-warning-msg');
+
+                        if(ajax_buy.status !== 200 || ajax_buy.responseText === 'Bad request' || ajax_buy.responseText === 'Wrong product id')
+                        {
+                            product_warning_element.innerHTML = 'Could not buy product. Refresh the page and try again';
+                            return;
+                        }
+
+                        switch(ajax_buy.responseText)
+                        {
+                            case 'Access denied':
+                                document.location.href = 'login.html';
+                                break;
+                            case 'Product out of stock':
+                            case 'Payment module in maintenance':
+                            case 'Delivery impossible':
+                                product_warning_element.innerHTML = ajax_buy.responseText;
+                                product_warning_element.style.display = 'block';
+                                break;
+                            default:
+                                const product_content = ajax_buy.responseText;
+                                const uri_content = "data:application/octet-stream," + encodeURIComponent(product_content);
+                                window.open(uri_content, 'save_product_window');
+                        }
+                    };
+                    ajax_buy.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    ajax_buy.send();
+                }));
+            }
+
+            const ajax_products = new XMLHttpRequest();
+            ajax_products.open('GET', 'back-end/get_products.php');
+            ajax_products.onreadystatechange = () => {
+                if(ajax_products.readyState !== XMLHttpRequest.DONE)
+                {
+                    return;
+                }
+
+                if(ajax_products.status !== 200)
+                {
+                    const products_elem = document.getElementById('products-container');
+                    const error_msg = 'Could not load products. Refresh the page and try again';
+                    products_elem.innerHTML = '<p>' + error_msg + '</p>';
+                    return;
+                }
+
+                if(ajax_products.responseText === 'Access denied')
+                {
+                    document.location.href = 'login.html';
+                    return;
+                }
+
+                let products_data = JSON.parse(ajax_products.responseText);
+                show_products(products_data);
+            };
+            ajax_products.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            ajax_products.send();
+
+            const ajax_profile = new XMLHttpRequest();
+            ajax_profile.open('GET', 'back-end/get_profile.php');
+            ajax_profile.onreadystatechange = () => {
+                if(ajax_profile.readyState !== XMLHttpRequest.DONE)
+                {
+                    return;
+                }
+
+                const profile_login_elem = document.getElementById('profile-login');
+
+                if(ajax_profile.status !== 200 || ajax_profile.responseText === 'Access denied')
+                {
+                    profile_login_elem.innerHTML = 'Error';
+                    return;
+                }
+
+                const profile = JSON.parse(ajax_profile.responseText);
+
+                profile_login_elem.innerHTML = profile['login'][0].toUpperCase() + profile['login'].slice(1);
+                const profile_description_elem = document.getElementById('profile-description');
+                profile_description_elem.innerHTML = profile['description'];
+            };
+            ajax_profile.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            ajax_profile.send();
+
+        });
+    </script>
+</body>
+
+</html>
