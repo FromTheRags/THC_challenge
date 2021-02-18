@@ -1,0 +1,11 @@
+*.iml
+challenge_reverse/android/buyExpress/.gradle
+challenge_reverse/android/buyExpress/local.properties
+challenge_reverse/android/buyExpress/.idea/libraries
+challenge_reverse/android/buyExpress/.idea/modules.xml
+challenge_reverse/android/buyExpress/.idea/workspace.xml
+challenge_reverse/android/buyExpress.DS_Store
+challenge_reverse/android/buyExpress/build
+challenge_reverse/android/buyExpress/captures
+challenge_reverse/android/buyExpress.externalNativeBuild
+

@@ -1,0 +1,65 @@
+Methode jadx:
+	https://github.com/skylot/jadx (plus beau mais pas de presentation bas niveau)
+
+Methode ghidra: 
+	https://ghidra-sre.org/ Ghidra: plus complet mais plus bas niveau aussi (même decompilé)
+
+Methode: apktool modif & rebuild
+	https://korben.info/decompiler-application-android-apk-recompiler.html
+
+	Alternatively, if do not want to use android studio, you can use apktools and sign the application (if the app is already installed, you will have to uninstall it, as the signature will be different):
+	https://ibotpeaches.github.io/Apktool/
+	    java -jar apktool_2.3.4.jar d app.apk -o appcustom
+	    cd appcustom/res/values
+	    edit file strings.xml (field IP, URL, PORT)
+	    cd ../../..
+	    java -jar apktool_2.3.4.jar b appcustom -o appcustom.apk
+
+	Then to sign the apk :
+
+	    Generate a certificat (only once, fill the fields with whatever you want) :
+	    keytool -genkey -v -keystore my-release-key.keystore -alias alias_name -keyalg RSA -keysize 2048 -validity 10000
+	    Sign with this certificat:
+	    jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore appcustom.apk alias_name
+
+	NB: Last version of apktool have issues with the format of ressource, so use 2.3.4 to be compatible
+
+Bonus: attaquer les fichiers smali (https://virtualabs.fr/Reversing-d-applications-Android.html), soit pour faire des modifs ou du reverse sur une fonction 
+(ghidra meilleur, mais toutes les infos en smali sont là )
+Methode d2j + jd-gui:
+	https://www.brightdevelopers.com/reverse-engineer-android-apk/
+	=> unzip l'apk (renommer en zip)
+	=> .\d2j-dex2jar.bat ..\..\apk\app-debug\classes.dex (https://github.com/pxb1988/dex2jar)
+	ou direct: 
+	==>  .\d2j-dex2jar.bat -f ..\..\apk\app-debug.apk
+	 https://github.com/java-decompiler/jd-gui 
+	On obtient un .jar que jd-gui peut décompiler très proprement !
+	
+Autres:
+	Fernflower https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine | https://github.com/fesh0r/fernflower 
+	(gradlew.bat jar -> \build\libs\fernflower.jar)
+	Procyon https://github.com/mstrobel/procyon/wiki/Java-Decompiler (not working at that time)
+	CFR: https://github.com/leibnitz27/cfr ou https://www.benf.org/other/cfr/ (oki easy & good average)
+
+From android :
+	Show Java (apk) :https://play.google.com/store/apps/details?id=com.njlabs.showjava&hl=en_US&gl=US
+	
+Assemblers/Dissasemblers et autres:
+	https://www.geeksgyaan.com/2017/09/decompile-apk-files.html
+	Windows/linux: https://github.com/pmikova/java-runtime-decompiler  (direct from jvm)
+	jasm
+	jcoder
+	javap (disassmble only)
+	
+	
+	
+Obfuscation:
+	https://stackoverflow.com/questions/17290023/obfuscation-in-android-studio
+	https://riis.com/blog/android-obfuscation-proguard-dexguard/
+	cf fichier proguard-rules.pro 
+	build.graddle:
+	//custom
+	        debug {
+	            minifyEnabled true
+	            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
