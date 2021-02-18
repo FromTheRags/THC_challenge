@@ -28,19 +28,18 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
     <script>
         function sign_out() {
             const ajax_logout = new XMLHttpRequest();
-            ajax_logout.open('GET', 'back-end/log_out.php');
+            ajax_logout.open('GET', '?request=sign_out');
             ajax_logout.onreadystatechange = () => {
                 if(ajax_logout.readyState !== XMLHttpRequest.DONE)
                 {
                     return;
                 }
-                document.location.href = 'login.html';
+                document.location.href = '?page=login';
             };
             ajax_logout.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             ajax_logout.send();
@@ -86,7 +85,7 @@
                     let quantity = e.parentElement.querySelector('.input-qty').value;
                     if(parseInt(quantity) < 1) quantity = '1';
                     const ajax_buy = new XMLHttpRequest();
-                    ajax_buy.open('GET', 'back-end/buy_product.php?id=' + product_id + '&quantity=' + quantity);
+                    ajax_buy.open('GET', '?request=buy_product&id=' + product_id + '&quantity=' + quantity);
                     ajax_buy.onreadystatechange = () => {
                         if(ajax_buy.readyState !== XMLHttpRequest.DONE)
                         {
@@ -104,7 +103,7 @@
                         switch(ajax_buy.responseText)
                         {
                             case 'Access denied':
-                                document.location.href = 'login.html';
+                                document.location.href = '?page=login';
                                 break;
                             case 'Product out of stock':
                             case 'Payment module in maintenance':
@@ -124,7 +123,7 @@
             }
 
             const ajax_products = new XMLHttpRequest();
-            ajax_products.open('GET', 'back-end/get_products.php');
+            ajax_products.open('GET', '?request=get_products');
             ajax_products.onreadystatechange = () => {
                 if(ajax_products.readyState !== XMLHttpRequest.DONE)
                 {
@@ -141,7 +140,15 @@
 
                 if(ajax_products.responseText === 'Access denied')
                 {
-                    document.location.href = 'login.html';
+                    document.location.href = '?page=login';
+                    return;
+                }
+
+                if(ajax_products.responseText === 'No products')
+                {
+                    const products_elem = document.getElementById('products-container');
+                    const error_msg = ajax_products.responseText + ' found';
+                    products_elem.innerHTML = '<p>' + error_msg + '</p>';
                     return;
                 }
 
@@ -152,7 +159,7 @@
             ajax_products.send();
 
             const ajax_profile = new XMLHttpRequest();
-            ajax_profile.open('GET', 'back-end/get_profile.php');
+            ajax_profile.open('GET', '?request=get_profile');
             ajax_profile.onreadystatechange = () => {
                 if(ajax_profile.readyState !== XMLHttpRequest.DONE)
                 {

@@ -79,6 +79,7 @@
                 const form_elem = document.getElementById("sign-in-form");
                 const form_data = new FormData(form_elem);
                 form_data.append('id', id);
+                form_data.append('request', 'sign_in');
                 const query_str = new URLSearchParams(form_data).toString();
                 const ajax_login = new XMLHttpRequest();
 
@@ -100,9 +101,9 @@
                         return;
                     }
 
-                    document.location.href = 'home.html';
+                    document.location.href = '?page=home';
                 };
-                ajax_login.open("POST", "back-end/login_handler.php", true);
+                ajax_login.open("POST", "", true);
                 ajax_login.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 ajax_login.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 ajax_login.send(query_str);

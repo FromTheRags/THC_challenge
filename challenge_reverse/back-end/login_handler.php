@@ -1,6 +1,7 @@
 <?php
 
 session_start();
+
 if(!isset($_POST['login']) || !isset($_POST['password']) || !isset($_POST['id']))
 {
     echo 'Bad request';
@@ -27,9 +28,6 @@ if($token_hash != hash("sha256", $token))
     echo 'Access denied'; // wrong token hash
     exit();
 }
-
-$db_access = parse_ini_file("../../db/db_access.config");
-$pdo = new PDO("mysql:host=" . $db_access['host'] . ";dbname=" . $db_access['name'], $db_access['user'], $db_access['password']);
 
 $stm = $pdo->prepare("SELECT UserId, PasswordHash, Salt FROM Users WHERE Login = :login");
 $stm->bindParam(":login", $login, PDO::PARAM_STR);
