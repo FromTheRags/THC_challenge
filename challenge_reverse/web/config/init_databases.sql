@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS Products (
 	PRIMARY KEY (ProductId)
 );
 
--- radoteurs
-INSERT INTO Users(Login, PasswordHash, Salt, Description) VALUES ('admin', '3ea3aa6b3d56d904d7a8a5b0b96acc539a1fe89e877736b98ddcee2a6437ab32', 'saltsaltsaltsalt', 'Papa depuis 2010, j\'ai un fils aîné qui s\'appelle Théophile, une fille qui s\'appelle Marcelline et un depuis peu un fils qui s\'appelle Augustin');
+-- theophile0910
+INSERT INTO Users(Login, PasswordHash, Salt, Description) VALUES ('admin', 'e1e270b5c806fd12be63fcd7a724fa7e80c3ae66e9a6d3e002817019a27e8be4', 'saltsaltsaltsalt', 'Papa depuis 2010, j\'ai un fils aîné qui s\'appelle Théophile, une fille qui s\'appelle Marcelline et un depuis peu un fils qui s\'appelle Augustin');
 -- radiation
 INSERT INTO Users(Login, PasswordHash, Salt, Description) VALUES ('lucie', '917e970e91c558aa9ca870cc80a80dbd239972ec8b9a589836002c650496d750', 'pepperpeppersalt', 'Je m\'appelle Lucie et j\'aime les tapis');
 -- radiateur
@@ -48,8 +48,7 @@ DROP TABLE IF EXISTS Users;
 CREATE TABLE IF NOT EXISTS Users (
 	UserId INT NOT NULL AUTO_INCREMENT,
 	Login VARCHAR(255) NOT NULL,
-	PasswordHash CHAR(64) NOT NULL,
-	Salt CHAR(16) NOT NULL,
+	Password CHAR(64) NOT NULL,
 	Description TEXT,
 	PRIMARY KEY (UserId)
 );
@@ -64,12 +63,12 @@ CREATE TABLE IF NOT EXISTS Products (
 	PRIMARY KEY (ProductId)
 );
 
--- radoteurs
-INSERT INTO Users(Login, PasswordHash, Salt, Description) VALUES ('admin', '3ea3aa6b3d56d904d7a8a5b0b96acc539a1fe89e877736b98ddcee2a6437ab32', 'saltsaltsaltsalt', 'Papa depuis 2010, j\'ai un fils aîné qui s\'appelle Théophile et une fille qui s\'appelle Marcelline');
+-- theophile0910
+INSERT INTO Users(Login, Password, Description) VALUES ('admin', 'theophile0910', 'Papa depuis 2010, j\'ai un fils aîné qui s\'appelle Théophile et une fille qui s\'appelle Marcelline');
 -- radiation
-INSERT INTO Users(Login, PasswordHash, Salt, Description) VALUES ('lucie', '917e970e91c558aa9ca870cc80a80dbd239972ec8b9a589836002c650496d750', 'pepperpeppersalt', 'Je m\'appelle Lucie et j\'aime les tapis');
+INSERT INTO Users(Login, Password, Description) VALUES ('lucie', 'radiation', 'Je m\'appelle Lucie et j\'aime les tapis');
 -- radiateur
-INSERT INTO Users(Login, PasswordHash, Salt, Description) VALUES ('raoul', '61f368d5cc6669bcaf8c92c871a18338e4253ae3805fd6df9db70df59b8aeab2', 'cannellecannelle', 'Je m\'appelle Raoul et j\'aime les poules');
+INSERT INTO Users(Login, Password, Description) VALUES ('raoul', 'radiateur', 'Je m\'appelle Raoul et j\'aime les poules');
 
 
 INSERT INTO Products(Name, Description, Price, QuantityAvailable) VALUES ('Hat', 'A nice little hat.', 15.49, 4);

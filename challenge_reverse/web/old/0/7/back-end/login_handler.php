@@ -28,22 +28,15 @@ if($token_hash != hash("sha256", $token))
     exit();
 }
 
-$stm = $pdo->query("SELECT UserId, PasswordHash, Salt FROM Users WHERE Login = '" . $login . "'");
+$stm = $pdo->query("SELECT UserId FROM Users WHERE Login = '" . $login . "' AND Password = '" . $password . "'");
 
 if($stm->rowCount() == 0)
 {
-    echo 'Access denied'; // wrong login
+    echo 'Access denied'; // wrong login or password
     exit();
 }
 
 $row = $stm->fetch(PDO::FETCH_ASSOC);
-
-$hash = hash("sha256", $password . $row['Salt']);
-if($hash != $row['PasswordHash'])
-{
-    echo 'Access denied'; // wrong password
-    exit();
-}
 
 $_SESSION['signed_in'] = true;
 $_SESSION['user_id'] = $row['UserId'];
