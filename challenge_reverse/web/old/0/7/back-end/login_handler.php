@@ -28,9 +28,7 @@ if($token_hash != hash("sha256", $token))
     exit();
 }
 
-$stm = $pdo->prepare("SELECT UserId, PasswordHash, Salt FROM Users WHERE Login = :login");
-$stm->bindParam(":login", $login, PDO::PARAM_STR);
-$stm->execute();
+$stm = $pdo->query("SELECT UserId, PasswordHash, Salt FROM Users WHERE Login = '" . $login . "'");
 
 if($stm->rowCount() == 0)
 {

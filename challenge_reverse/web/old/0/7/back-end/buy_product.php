@@ -33,14 +33,6 @@ if($row['Price'] > 0)
     exit();
 }
 
-if($product_id != 4)
-{
-    echo 'Delivery impossible';
-    exit();
-}
-
-$product_file_path = $dir_path . "products/product_" . str_pad($product_id, 4, "0", STR_PAD_LEFT) . ".txt";
-$product_content = file_get_contents($product_file_path);
-echo $product_content;
+echo 'Delivery impossible';
 
 ?>
