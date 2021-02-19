@@ -47,12 +47,25 @@ if(!isset($_GET['request']) && !isset($_GET['page']))
 // if page selected => page selector (html front-end pages)
 if(isset($_GET['page']))
 {
+    function add_version_header()
+    {
+        global $app_version;
+        echo "<!-- Shopping Express v" . $app_version . " -->\n";
+        if(floatval($app_version) >= 1.0)
+        {
+            echo "<!-- The updated site is now up ! -->\n";
+        }
+        echo "\n";
+    }
+
     switch($_GET['page'])
     {
         case "login":
+            add_version_header();
             require_once($dir_path . "front-end/login.html");
             break;
         case "home":
+            add_version_header();
             if(!isset($_SESSION['signed_in']) || !$_SESSION['signed_in'])
             {
                 require_once($dir_path . "front-end/login.html");
