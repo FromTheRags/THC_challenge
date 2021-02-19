@@ -36,7 +36,7 @@ INSERT INTO Users(Login, PasswordHash, Salt, Description) VALUES ('jules', '0e05
 INSERT INTO Products(Name, Description, Price, QuantityAvailable) VALUES ('Hat', 'A nice little hat.', 15.49, 4);
 INSERT INTO Products(Name, Description, Price) VALUES ('Spiral of power', 'A spiral to bring you power.', 99.99);
 INSERT INTO Products(Name, Description, Price, QuantityAvailable) VALUES ('Green mint', 'A wonderful decorative mint leaf.', 0.0, 15);
-INSERT INTO Products(Name, Description, Price, QuantityAvailable) VALUES ('Flag of victory', 'Workers of all lands, unite !<br /><i style="color: green">Note : This article is dematerialized, you can download it instantly after purchasing it</i>', 999.99, 1);
+INSERT INTO Products(Name, Description, Price, QuantityAvailable) VALUES ('Flag of Scotland', 'Workers of all lands, unite !<br /><i style="color: green">Note : This article is dematerialized, you can download it instantly after purchasing it</i>', 999.99, 1);
 
 
 -- former site

