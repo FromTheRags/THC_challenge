@@ -1,10 +1,12 @@
 
-# buyExpress: android app !
+# PIR: android app !
 
-This repository is a AndroidStudio project of an android application to tweak our **buyExpress application**. 
+This repository is a AndroidStudio project of an android application to use more efficiently our **INSA shuttle application**. 
 
-## Mod ification
+## Configuration
 
+This project is not in production yet, meaning there is not a server online to manage the car, just a local node js server to start on your local network ([the node server](https://github.com/SuperTeam1nsa/PIR_website/tree/372a7337931f0c8842771b4be7517a1e7f6cf31c))
+So you need to configure the IP of the server to connect:
 ### 1. With Android Studio:
 *  Open the project in Android Studio
 *  edit file `strings.xml` in `app/src/main/res/values` with the good ip/URL/port
@@ -29,7 +31,7 @@ This repository is a AndroidStudio project of an android application to tweak ou
   
 **NB:** Last version of [apktool](https://ibotpeaches.github.io/Apktool/) have issues with the format of ressource, so use 2.3.4 to be compatible
 ### 3. With default values 
- Or if you do not want to deal with apk, just redirect `https://tryagain.dynamic.net:80` to your local server.
+ Or if you do not want to deal with apk, just configure your local network to put the server on `http://192.168.43.193:8080`.
 
 ## Installation
 

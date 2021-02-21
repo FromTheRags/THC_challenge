@@ -6,14 +6,18 @@ import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class WebAppInterface {
     Context mContext;
+    Object mo;
     /** Instantiate the interface and set the context */
-    WebAppInterface(Context c) {
+    WebAppInterface(Context c,Object o) {
         mContext = c;
+        mo=o;
     }
     /** Show a toast from the web page */
     @JavascriptInterface
@@ -21,25 +25,16 @@ public class WebAppInterface {
         Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
     }
     @JavascriptInterface
-    public String identification() {
-        MessageDigest digest = null;
-        byte[] byteData = new byte[0];
+    public String identification()  {
         try {
-            digest = MessageDigest.getInstance("SHA-256");
-            byteData = digest.digest(mContext.getResources().getString(R.string.token).getBytes("UTF-8"));
-            StringBuffer hash = new StringBuffer();
-            for (int i = 0; i < byteData.length; i++){
-                hash.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            //Log.d("webClient","hash: "+hash.toString());
-            return hash.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
-         }
-        //Log.e("webClient","Erreur hash ! ");
-        showToast("Version d'Android incompatible !");
-        return "Hash erreur !";
+           return (String)mo.getClass().getMethod("id").invoke(mo);
+        } catch (IllegalAccessException e) {
+            Log.d("webClient",e.getMessage()+e.getCause()+e.getStackTrace()+e.toString());
+        } catch (InvocationTargetException e) {
+            Log.d("webClient",e.getMessage()+e.getCause()+e.getStackTrace()+e.toString());
+        } catch (NoSuchMethodException e) {
+            Log.d("webClient",e.getMessage()+e.getCause()+e.getStackTrace()+e.toString());
+        }
+        return "fail!";
     }
 }

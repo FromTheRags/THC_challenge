@@ -1,16 +1,15 @@
 package com.example.dynaapp;
 
 
-import android.content.Context;
-import android.webkit.JavascriptInterface;
-import android.widget.Toast;
-
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class idInter {
     public static String tk;
+    public idInter(String a){
+        tk=a;
+    }
     public static String id() {
         MessageDigest digest = null;
         byte[] byteData = new byte[0];
