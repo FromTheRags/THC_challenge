@@ -9,6 +9,7 @@ session_start();
 if(!isset($_SESSION['requests_times']))
 {
     $_SESSION['requests_times'] = array(time());
+    $_SESSION['banned']=0;
 }
 else
 {
@@ -23,8 +24,10 @@ else
         if($oldest_request_time < time() - $min_time)
         {
             echo 'Access denied'; // too many requests
+            $_SESSION['banned']=1;
             exit();
-        }
+        }else if ($_SESSION['banned']){
+        $_SESSION['requests_times'] = array(time());
     }
 
     array_unshift($_SESSION['requests_times'], time());

@@ -1,25 +1,14 @@
 package inc.pir.buyexpress;
 
-import android.util.Log;
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
-
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
 
 /**
  * AES-GCM inputs - 12 bytes IV, need the same IV and secret keys for encryption and decryption.
@@ -40,49 +29,16 @@ public class EncryptorAesGcmPassword {
     private static final int IV_LENGTH_BYTE = 12;
     private static final int SALT_LENGTH_BYTE = 16;
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
-    public static byte[] readAllBytes(InputStream inputStream) throws IOException {
-        final int bufLen = 1024;
-        byte[] buf = new byte[bufLen];
-        int readLen;
-        IOException exception = null;
 
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-            while ((readLen = inputStream.read(buf, 0, bufLen)) != -1)
-                outputStream.write(buf, 0, readLen);
-
-            return outputStream.toByteArray();
-        } catch (IOException e) {
-            exception = e;
-            throw e;
-        } finally {
-            if (exception == null) inputStream.close();
-            else try {
-                inputStream.close();
-            } catch (IOException e) {
-                exception.addSuppressed(e);
-            }
-        }
-    }
     public static byte[] decryptFile(File fromEncryptedFile, String password) throws Exception {
-
-        // read a file
-        //<=> byte[] fileContent = Files.readAllBytes(Paths.get(fromEncryptedFile));
-
-            //tips, if very big, write portion to a file, 4096 by 4096 cf copyAssetFile
-           /* NON !!!! lit mal le fichier
-            byte[] buf = new byte[MAX_SIZE];
-            //while si le fichier est plus grand
-        int nb=fis.read(buf);*/
-       // Log.d("webClient", "lu:"+nb);
+        //rq:avoid custom loading file & always use readAllBytes to avoid strange issue.
         FileInputStream fis = new FileInputStream(fromEncryptedFile);
-        byte[] fileContent =EncryptorAesGcmPassword.readAllBytes(fis);
+        byte[] fileContent =CryptoUtils.readAllBytes(fis);
         fis.close();
         return EncryptorAesGcmPassword.decrypt(fileContent, password);
     }
     // we need the same password, salt and iv to decrypt it
-    private static byte[] decrypt(byte[] cText, String password) throws Exception {
+    static byte[] decrypt(byte[] cText, String password) throws Exception {
 
         //byte[] decode = Base64.getDecoder().decode(cText.getBytes(UTF_8));
         // get back the iv and salt from the cipher text

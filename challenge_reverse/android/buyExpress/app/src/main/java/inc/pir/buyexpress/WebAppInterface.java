@@ -5,15 +5,12 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class WebAppInterface {
-    Context mContext;
-    Object mo;
+    private Context mContext;
+    private Object mo;
     /** Instantiate the interface and set the context */
     WebAppInterface(Context c,Object o) {
         mContext = c;
@@ -28,12 +25,8 @@ public class WebAppInterface {
     public String identification()  {
         try {
            return (String)mo.getClass().getMethod("id").invoke(mo);
-        } catch (IllegalAccessException e) {
-            Log.d("webClient",e.getMessage()+e.getCause()+e.getStackTrace()+e.toString());
-        } catch (InvocationTargetException e) {
-            Log.d("webClient",e.getMessage()+e.getCause()+e.getStackTrace()+e.toString());
-        } catch (NoSuchMethodException e) {
-            Log.d("webClient",e.getMessage()+e.getCause()+e.getStackTrace()+e.toString());
+        } catch (IllegalAccessException | InvocationTargetException |NoSuchMethodException e) {
+            Log.d("webClient",e.getMessage()+e.getCause()+ Arrays.toString(e.getStackTrace()) +e.toString());
         }
         return "fail!";
     }
