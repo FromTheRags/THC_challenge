@@ -7,12 +7,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Base64;
 
 /**
@@ -69,9 +72,9 @@ public class EncryptorAesGcmPassword {
 
     }
     public static void encryptFile(String fromFile, String toFile, String password) throws Exception {
-
+    	Path.of(fromFile, "");
         // read a normal txt file
-        byte[] fileContent = Files.readAllBytes(Paths.get(ClassLoader.getSystemResource(fromFile).toURI()));
+        byte[] fileContent = Files.readAllBytes(Path.of(fromFile, ""));//Paths.get(ClassLoader.getSystemResource(fromFile).toURI()));
 
         // encrypt with a password
         byte[] encryptedText = EncryptorAesGcmPassword.encrypt(fileContent, password);
@@ -82,7 +85,7 @@ public class EncryptorAesGcmPassword {
         Files.write(path, encryptedText);
 
     }
-    public static byte[] readAllBytes(FileInputStream inputStream) throws IOException {
+    public static byte[] readAllBytes(InputStream inputStream) throws IOException {
         final int bufLen = 1024;
         byte[] buf = new byte[bufLen];
         int readLen;
@@ -153,7 +156,45 @@ public class EncryptorAesGcmPassword {
         return plainText;//new String(plainText, UTF_8);
 
     }
-
+    private static String serv(String url){
+        try {
+            HttpURLConnection con = (HttpURLConnection) ( new URL(
+                    url+"?request=get_authentication_code")).openConnection();
+            con.setRequestMethod("GET");
+            con.setDoInput(true);
+            con.setDoOutput(false);
+            con.setConnectTimeout(2000);
+            con.connect();
+           return Integer.toString(con.getResponseCode());
+        } catch (Exception e) {
+            System.out.print("webClient"+e.getMessage()+e.getCause()+Arrays.toString(e.getStackTrace()) +e.toString());
+        }
+        return "fail";
+    }
+    private static void stressOut(String url) {
+    	long startTime = System.currentTimeMillis();
+    	
+        try {
+           	for(int i=0; i<100;i++) {
+            HttpURLConnection con = (HttpURLConnection) ( new URL(
+                    url)).openConnection();
+            con.setRequestMethod("GET");
+            con.setDoInput(true);
+            con.setDoOutput(false);
+            con.setConnectTimeout(2000);
+            con.connect();
+           String a=new String((readAllBytes(con.getInputStream())));
+           System.out.println(a);
+           if(a.contains("Access denied")) {
+        	   System.out.print("Nickel ! requête numero: "+i);
+           }
+           	}
+        	long stopTime = System.currentTimeMillis();
+        	System.out.println("Elapsed time was " + (stopTime - startTime) + " miliseconds.");
+        } catch (Exception e) {
+            System.out.print("webClient"+e.getMessage()+e.getCause()+Arrays.toString(e.getStackTrace()) +e.toString());
+        }
+    }
     public static void main(String[] args) throws Exception {
 
        /* String OUTPUT_FORMAT = "%-30s:%s";
@@ -171,8 +212,14 @@ public class EncryptorAesGcmPassword {
 
         String decryptedText = EncryptorAesGcmPassword.decrypt(encryptedTextBase64, PASSWORD);
         System.out.println(String.format(OUTPUT_FORMAT, "Decrypted (plain text)", decryptedText));*/
-    	 String password = "aBeautifulLaydOfEncryption";
-    	  String fromFile = "test.apk"; // from resources folder
+    	
+    	//test code getting http
+    	//System.out.print("code: "+serv("https://tryagain.dynamic-dns.net/"));
+    	//test ip ban
+    	stressOut("https://tryagain.dynamic-dns.net/");
+    	//encryption apk + check decryption 
+    	/* String password = "aBeautifulLaydOfEncryption";
+    	  String fromFile = "app-debug.apk"; // from resources folder
     	  String toFile = "C:\\Users\\FACHE Rémi\\Documents\\Programmation\\JAVA\\testCrypto\\test-sec.apk";
 
     	  // encrypt file
