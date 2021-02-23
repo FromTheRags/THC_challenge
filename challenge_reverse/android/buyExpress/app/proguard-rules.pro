@@ -17,8 +17,8 @@
 -verbose
 -dontnote
 -dontwarn
--dontshrink
--dontoptimize
+#-dontshrink
+#-dontoptimize
 # keep the class and specified members from being removed or renamed
 -keep class inc.pir.buyexpress.MainActivity { void onCreate(android.os.Bundle); }
 -keepattributes !LocalVariableTable,!LocalVariableTypeTable

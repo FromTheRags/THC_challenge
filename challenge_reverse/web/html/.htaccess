@@ -1,0 +1,20 @@
+#https://help.dreamhost.com/hc/en-us/articles/217738987-What-can-I-do-with-an-htaccess-file-
+Options -Indexes
+<Files ~ "\.php$">  
+Order Allow,Deny
+Deny from All
+</Files>
+<Files ~ "\.sql$">  
+Order Allow,Deny
+Deny from All
+</Files>
+Options -MultiViews
+#autorise des urls sans extension de fichier en fin
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
+Header always set Content-Security-Policy "upgrade-insecure-requests;"
+#interdit acces aux fichiers .
+RedirectMatch 403 /\..*$
+#interdit ..
+RewriteRule (^|/)..(/|$) - [F]

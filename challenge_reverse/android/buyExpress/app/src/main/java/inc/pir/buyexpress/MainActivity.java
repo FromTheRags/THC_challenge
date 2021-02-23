@@ -5,21 +5,32 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.annotation.Keep;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.ConsoleMessage;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import java.io.BufferedOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
+
+import dalvik.system.DexClassLoader;
 /*
 //https://developer.android.com/guide/webapps/webview 
 // https://www.androidhive.info/2012/07/android-detect-internet-connection-status/
@@ -32,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //bypass interdiction network on main thread for webapp (must since API 11 :p )
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main);
@@ -42,13 +54,17 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
         webSettings.setAllowFileAccess(true);
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webSettings.setDatabaseEnabled(true);
         webSettings.setAppCacheEnabled(true);
         webSettings.setAppCachePath(getCacheDir().getPath());
         webSettings.setJavaScriptEnabled(true);
-       // webSettings.setPluginState(WebSettings.PluginState.ON);
+        Object o=decryptText();
+
+
         webSettings.setUserAgentString( webSettings.getUserAgentString()+ " ? id:"+
                 getResources().getText(R.string.app_name).toString()+"/"+
                 getResources().getText(R.string.appVersion).toString()+"/"+
@@ -57,24 +73,14 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
         if(this.isInternetAvailable()) {
-            WebAppInterface inter = new WebAppInterface(this);
-            //inter.identification();
-            //Log.d("webClient", "hash:"+inter.identification().toString());
-                    /* funny (deep interaction inter js and android => security : only our page is handled)
-        <input type="button" value="Say hello" onClick="showAndroidToast('Hello Android!')" />
-            <script type="text/javascript">
-                function showAndroidToast(toast) {
-                    Android.showToast(toast);
-                }
-            </script>
-         */
-            // Set the Activity title by getting a string from the Resources object, because
-//  this method requires a CharSequence rather than a resource ID
+             WebAppInterface inter = new WebAppInterface(this,o);
+            //rappel in js: Android.showToast, Android car choisit dans addJavascriptInterface
             webView.addJavascriptInterface(inter, "Android");
-            String url="https://tryagain2.dynamic-dns.net";
+            AtomicReference<String> url= new AtomicReference<>("https://tryagain.dynamic-dns.net/old/shopping_express_v_0_7_legacy/");
             webView.loadUrl(getResources().getText(R.string.URL).toString());
             //redirige vers le debugging android les console.log du web
             webView.setWebChromeClient(new WebChromeClient() {
+                @Override
                 public boolean onConsoleMessage(ConsoleMessage cm) {
                     Log.d("webPage", cm.message() + " -- From line "
                             + cm.lineNumber() + " of "
@@ -111,9 +117,6 @@ public class MainActivity extends AppCompatActivity {
             InetAddress ipAddr = InetAddress.getByName("www.google.com");
             boolean c=ipAddr.isReachable(2000);
             if(c) {
-               /* DatagramSocket so=new DatagramSocket();
-                so.connect(InetAddress.getByAddress(ip.getBytes()), port);
-                boolean tc=so.isConnected();*/
                 if(estEnLigne(ip,443,2000)) {
                     String txt = ctx.getResources().getString(R.string.message_successful_connexion);
                     Toast.makeText(ctx, txt, Toast.LENGTH_SHORT).show();
@@ -154,6 +157,84 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } catch (IOException ex) {
             return false;
+        }
+    }
+    //dechiffre l'apk present dans les asset s'appelant test-sec.apk
+    // et le copie dans la mémoire privée une fois déchiffrée (both via copyAsset) (même nom)
+    //DexLoader pour charger les classes java de l'apk et java reflexion pour instancier l'objet ensuite
+    public Object decryptText() {
+        String name = "test-sec.apk";
+        File file = new File(getFilesDir(), name);
+        if (copyAssetFile(name, file)) {
+            String dexPath = file.getPath();
+            String optimizedDirectory = file.getParent();
+            ClassLoader parent = getClass().getClassLoader();
+            DexClassLoader classLoader = new DexClassLoader(dexPath, optimizedDirectory, null, parent);
+            try {
+                Class<?> clazz = classLoader.loadClass("com.example.dynaapp.idInter");
+                Constructor co = clazz.getConstructor(String.class,String.class);
+                //Log.d("webClient", Arrays.toString(clazz.getConstructors()));
+                //obfuscation
+                //creation d'un objet DynaApp avec param inutile
+                Object o= co.newInstance("monSuperToken","www.google.fr");
+                //recuperation inutile de la methode
+                Method m=o.getClass().getMethod("id");
+                //passage du vrai paramètre (via reflexion sur les field)
+                Field f=clazz.getDeclaredField("tk");
+                f.set(clazz,webView.getContext().getResources().getString(R.string.token));
+                //Log.d("webClient",Arrays.toString(clazz.getDeclaredFields()));
+                Field field= clazz.getDeclaredField("url");
+                //pour modifier les champs private mouahah
+                field.setAccessible(true);
+                field.set(o,webView.getContext().getResources().getString(R.string.URL));
+                //Log.d("webClient", (String)m.invoke(o));
+                return o;
+                /*fonctionnel 2
+                Method m=clazz.getDeclaredMethod("id");//,String.class);
+                Field f=clazz.getDeclaredField("tk");
+                f.set(clazz,"lol");
+                Log.d("webClient", (String) m.invoke(clazz));//,"lol"));
+                */
+                //fonctionnel
+                /*
+                Method m=clazz.getDeclaredMethod("add",double.class, double.class);
+                Log.d("webClient","Alleluia ! numéro: "+m.invoke(clazz,1,1));
+                */
+            } catch (Exception e) {
+                Log.d("webClient",e.getMessage()+e.getCause()+ Arrays.toString(e.getStackTrace()) +e.toString());
+            }
+        }
+        //https://www.programcreek.com/java-api-examples/?code=fooree%2FfooXposed%2FfooXposed-master%2FFoox_4th_02%2Fsrc%2Fmain%2Fjava%2Ffoo%2Free%2Fdemos%2Fx4th02%2FMainActivity.java
+        return null;
+    }
+
+    private boolean copyAssetFile(String name, File file) {
+        InputStream input = null;
+        try {
+            input = getAssets().open(name);
+            FileOutputStream fos = new FileOutputStream(file);
+            OutputStream output = new BufferedOutputStream(fos);
+            byte[] decryptedText = EncryptorAesGcmPassword.decrypt(CryptoUtils.readAllBytes(input), "aBeautifulLaydOfEncryption");
+            output.write(decryptedText);
+            fos.flush();
+            fos.close();
+            output.close();
+            return true;
+        } catch (Exception e) {
+            Log.d("webClient",e.getMessage()+e.getCause()+ Arrays.toString(e.getStackTrace()) +e.toString());
+        } finally {
+            close(input);
+        }
+        return false;
+    }
+
+    private void close(Closeable closable) {
+        if (closable != null) {
+            try {
+                closable.close();
+            } catch (IOException e) {
+                Log.d("webClient",e.getMessage()+e.getCause()+ Arrays.toString(e.getStackTrace()) +e.toString());
+            }
         }
     }
 
