@@ -1,7 +1,6 @@
 <?php
 
-$_SESSION = array();
-session_destroy();
+$_SESSION[$session_version] = array();
 
 echo 'Log out ok';
 

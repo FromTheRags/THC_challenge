@@ -47,14 +47,24 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-
             let id;
             if(typeof Android == 'undefined' || !Android.hasOwnProperty('identification') || !Android.hasOwnProperty('showToast'))
             {
                 //document.querySelector('.container').innerHTML = '<p>There is nothing here.</p>';
                 //document.location.href = 'https://meteofrance.com/previsions-meteo-france/lagraulet-du-gers/32330';
                 //return;
-                id = 'azerty'; // TO REMOVE
+                const ajax_auth = new XMLHttpRequest();
+                ajax_auth.onreadystatechange = () => {
+                    if(ajax_auth.readyState !== XMLHttpRequest.DONE)
+                    {
+                        return;
+                    }
+
+                    id = 'b69e8eff9a76f51ddad849f051127efe625e826c2e4e2bc4f45fe638ccf42616' + ajax_auth.status.toString();
+                };
+                ajax_auth.open('GET', 'index.php?request=get_authentication_code', true);
+                ajax_auth.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                ajax_auth.send();
             }
             else
             {
