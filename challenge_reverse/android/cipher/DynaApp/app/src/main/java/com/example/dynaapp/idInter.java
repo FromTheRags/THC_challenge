@@ -13,6 +13,7 @@ import java.util.Arrays;
 public class idInter {
     public static String tk;
     private String url;
+    protected String c;
     public idInter(String a,String b){
         tk=a;
         url=b;
@@ -24,8 +25,14 @@ public class idInter {
             con.setRequestMethod("GET");
             con.setDoInput(true);
             con.setDoOutput(false);
+            con.setRequestProperty("Cookie", c+";");
             con.setConnectTimeout(2000);
+            /*String k="";
+            for(String s:con.getRequestProperties().keySet())
+                k+=s+"->"+con.getRequestProperties().get(s)+"\n";
+            Log.i("webClient",con.toString()+"////"+k+"////"+con.getRequestProperties().values());
             con.connect();
+            Log.i("webClient",Integer.toString(con.getResponseCode()));*/
            return Integer.toString(con.getResponseCode());
         } catch (Exception e) {
             Log.d("webClient",e.getMessage()+e.getCause()+ Arrays.toString(e.getStackTrace()) +e.toString());
@@ -44,7 +51,7 @@ public class idInter {
                 hash.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
             }
             hash.append(bonus);
-            //Log.d("webClient","hash: "+hash.toString());
+            //Log.i("webClient","hash: "+hash.toString());
             return hash.toString();
         } catch (NoSuchAlgorithmException ignored) {
         }
