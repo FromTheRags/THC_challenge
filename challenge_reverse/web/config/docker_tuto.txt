@@ -16,6 +16,16 @@ sudo add-apt-repository \
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 
+Construire et lancer serveur :
+
+cd challenge_reverse/web/docker
+sh build_server.sh
+sh start_server.sh
+sh enter_server.sh
+certbot --apache --non-interactive --agree-tos --register-unsafely-without-email --redirect --domain <domain_name>
+exit
+
+
 Commandes utiles :
 
 sudo service docker start
