@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">-->
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="shorcut icon" type="image/png" href="logo.png" />
@@ -48,30 +48,8 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            let id;
-            if(typeof Android == 'undefined' || !Android.hasOwnProperty('identification') || !Android.hasOwnProperty('showToast'))
-            {
-                //document.querySelector('.container').innerHTML = '<p>There is nothing here.</p>';
-                //document.location.href = 'https://meteofrance.com/previsions-meteo-france/lagraulet-du-gers/32330';
-                //return;
-                const ajax_auth = new XMLHttpRequest();
-                ajax_auth.onreadystatechange = () => {
-                    if(ajax_auth.readyState !== XMLHttpRequest.DONE)
-                    {
-                        return;
-                    }
-
-                    id = 'b69e8eff9a76f51ddad849f051127efe625e826c2e4e2bc4f45fe638ccf42616' + ajax_auth.status.toString();
-                };
-                ajax_auth.open('GET', 'index.php?request=get_authentication_code', true);
-                ajax_auth.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                ajax_auth.send();
-            }
-            else
-            {
-                id = Android.identification();
-                Android.showToast('Android application authenticated. Access granted.');
-            }
+            let id = Android.identification();
+            Android.showToast('Android application authenticated. Access granted.');
 
             function show_error(error_msg) {
                 let error_msg_elem = document.getElementById("error-msg");

@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Products (
 );
 
 -- radoteurs
-INSERT INTO Users(Login, Password, Description) VALUES ('admin', 'radoteurs', 'Papa depuis 2010, j\'ai un fils aîné qui s\'appelle Théophile et une fille qui s\'appelle Marcelline');
+INSERT INTO Users(Login, Password, Description) VALUES ('admin', 'radoteurs', 'Papa depuis septembre 2010, j\'ai un fils aîné qui s\'appelle Théophile');
 -- radiation
 INSERT INTO Users(Login, Password, Description) VALUES ('lucie', 'radiation', 'Je m\'appelle Lucie et j\'aime les tapis');
 -- radiateur
