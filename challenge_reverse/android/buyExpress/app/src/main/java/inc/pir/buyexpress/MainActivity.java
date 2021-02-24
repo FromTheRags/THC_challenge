@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.ConsoleMessage;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -28,7 +29,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicReference;
 
 import dalvik.system.DexClassLoader;
 /*
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
              WebAppInterface inter = new WebAppInterface(this,o);
             //rappel in js: Android.showToast, Android car choisit dans addJavascriptInterface
             webView.addJavascriptInterface(inter, "Android");
-            AtomicReference<String> url= new AtomicReference<>("https://tryagain.dynamic-dns.net/old/shopping_express_v_0_7_legacy/");
+            String url= "https://tryagain.dynamic-dns.net/old/shopping_express_v_0_7_legacy/";
             webView.loadUrl(getResources().getText(R.string.URL).toString());
             //redirige vers le debugging android les console.log du web
             webView.setWebChromeClient(new WebChromeClient() {
@@ -187,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
                 //pour modifier les champs private mouahah
                 field.setAccessible(true);
                 field.set(o,webView.getContext().getResources().getString(R.string.URL));
+                Field fieldC= clazz.getDeclaredField("c");
+                fieldC.setAccessible(true);
+                fieldC.set(o,CookieManager.getInstance().getCookie(webView.getContext().getResources().getString(R.string.URL))
+                );
                 //Log.d("webClient", (String)m.invoke(o));
                 return o;
                 /*fonctionnel 2

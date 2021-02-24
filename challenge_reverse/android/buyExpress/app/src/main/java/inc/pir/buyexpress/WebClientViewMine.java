@@ -27,6 +27,11 @@ public class WebClientViewMine extends WebViewClient {
             }
         }
     }
+    /*@Override
+    public void onPageFinished(WebView view, String url){
+        String cookies = CookieManager.getInstance().getCookie(url);
+        Log.d("webClient", "All the cookies of"+url+" in a string:" + cookies);
+    }*/
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Context context = view.getContext();
