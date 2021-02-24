@@ -1,4 +1,4 @@
-
+Idée: put http site version in strings, intercept redirect htttps via sslstrip, which connect https & keep http open with phone #mitm
 bonus signing:
 https://github.com/fornwall/apksigner
 https://ibotpeaches.github.io/Apktool/
