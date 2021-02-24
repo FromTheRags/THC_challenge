@@ -12,7 +12,7 @@ $user_agent_ok = strpos($user_agent, "? id:BuyExpress/" . $app_version . "/" . $
 
 if(!$user_agent_ok)
 {
-    echo 'Access denied' . $user_agent; // wrong user agent
+    echo 'Access denied'; // wrong user agent
     exit();
 }
 

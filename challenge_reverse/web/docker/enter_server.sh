@@ -1,3 +1,4 @@
 #!/bin/sh
 
-sudo docker exec -it shopping_express_site /bin/bash
+sudo docker exec -it shopping_express_container /bin/bash
+

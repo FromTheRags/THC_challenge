@@ -1,6 +1,7 @@
 <?php
 
 // init session
+session_set_cookie_params(['samesite' => 'Lax']);
 session_start();
 $session_version = 'version-' . strval($app_version);
 

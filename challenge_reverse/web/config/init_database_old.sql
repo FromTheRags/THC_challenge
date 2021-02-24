@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS Products (
 	PRIMARY KEY (ProductId)
 );
 
--- theophile0910
-INSERT INTO Users(Login, Password, Description) VALUES ('admin', 'theophile0910', 'Papa depuis 2010, j\'ai un fils aîné qui s\'appelle Théophile et une fille qui s\'appelle Marcelline');
+-- radoteurs
+INSERT INTO Users(Login, Password, Description) VALUES ('admin', 'radoteurs', 'Papa depuis 2010, j\'ai un fils aîné qui s\'appelle Théophile et une fille qui s\'appelle Marcelline');
 -- radiation
 INSERT INTO Users(Login, Password, Description) VALUES ('lucie', 'radiation', 'Je m\'appelle Lucie et j\'aime les tapis');
 -- radiateur
