@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Arrays;
@@ -113,26 +112,26 @@ public class MainActivity extends AppCompatActivity {
         try {
             ///ok
             String ip = ctx.getResources().getString(R.string.ip);
-           // int port = ctx.getResources().getInteger(R.integer.port);
-            InetAddress ipAddr = InetAddress.getByName("www.google.com");
-            boolean c=ipAddr.isReachable(2000);
-            if(c) {
-                if(estEnLigne(ip,443,2000)) {
-                    String txt = ctx.getResources().getString(R.string.message_successful_connexion);
-                    Toast.makeText(ctx, txt, Toast.LENGTH_SHORT).show();
-                    return true;
-                }else {
+            if(estEnLigne(ip,443,2000)) {
+                String txt = ctx.getResources().getString(R.string.message_successful_connexion);
+                Toast.makeText(ctx, txt, Toast.LENGTH_SHORT).show();
+                return true;
+            }else {
+                //InetAddress ipAddr = InetAddress.getByName("www.google.com");
+                //ipAddr.isReachable(2000);
+                boolean c=estEnLigne("www.google.com",443,1000);
+                if(c) {
                     String txt = ctx.getResources().getString(R.string.message_unsuccessful_connexion);
                     Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
-                }
-            }else {
-                if(isNetworkAvailable(ctx)) {
-                    Log.d("webClient","sooo");
-                    String txt = ctx.getResources().getString(R.string.error_message_no_internet_but_network);
-                    Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
                 }else {
-                    String txt = ctx.getResources().getString(R.string.error_message_no_internet);
-                    Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
+                    if(isNetworkAvailable(ctx)) {
+                        Log.d("webClient","sooo");
+                        String txt = ctx.getResources().getString(R.string.error_message_no_internet_but_network);
+                        Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
+                    }else {
+                        String txt = ctx.getResources().getString(R.string.error_message_no_internet);
+                        Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         } catch (Exception e) {
@@ -151,9 +150,7 @@ public class MainActivity extends AppCompatActivity {
         // Any Open port on other machine
         // openPort =  22 - ssh, 80 or 443 - webserver, 25 - mailserver etc.
         try {
-            try (Socket soc = new Socket()) {
-                soc.connect(new InetSocketAddress(addr, openPort), timeOutMillis);
-            }
+            new Socket().connect(new InetSocketAddress(addr, openPort), timeOutMillis);
             return true;
         } catch (IOException ex) {
             return false;
@@ -165,7 +162,12 @@ public class MainActivity extends AppCompatActivity {
     public Object decryptText() {
         String name = "test-sec.apk";
         File file = new File(getFilesDir(), name);
-        if (copyAssetFile(name, file)) {
+        if(file.exists() && !file.isDirectory()) {
+            // do something
+        }else{
+            if (!copyAssetFile(name, file))
+                return null;
+        }
             String dexPath = file.getPath();
             String optimizedDirectory = file.getParent();
             ClassLoader parent = getClass().getClassLoader();
@@ -205,9 +207,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("webClient","Alleluia ! numéro: "+m.invoke(clazz,1,1));
                 */
             } catch (Exception e) {
-                Log.d("webClient",e.getMessage()+e.getCause()+ Arrays.toString(e.getStackTrace()) +e.toString());
+                Log.d("webClient", e.getMessage() + e.getCause() + Arrays.toString(e.getStackTrace()) + e.toString());
             }
-        }
         //https://www.programcreek.com/java-api-examples/?code=fooree%2FfooXposed%2FfooXposed-master%2FFoox_4th_02%2Fsrc%2Fmain%2Fjava%2Ffoo%2Free%2Fdemos%2Fx4th02%2FMainActivity.java
         return null;
     }
