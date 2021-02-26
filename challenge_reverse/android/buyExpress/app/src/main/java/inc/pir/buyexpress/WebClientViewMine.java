@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.util.Log;
+import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -15,7 +16,12 @@ import android.webkit.WebViewClient;
 import java.util.Objects;
 
 public class WebClientViewMine extends WebViewClient {
-    //avoid
+    MainActivity ctx;
+    boolean first;
+    WebClientViewMine(MainActivity app){
+        ctx=app;
+        first=true;
+    }
     @Override
     public void onLoadResource( WebView webview, String url) {
         // exit the redirect loop if landed on homepage
@@ -32,6 +38,34 @@ public class WebClientViewMine extends WebViewClient {
         String cookies = CookieManager.getInstance().getCookie(url);
         Log.d("webClient", "All the cookies of"+url+" in a string:" + cookies);
     }*/
+    /*@Override
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        ctx.findViewById(R.id.textView1).setVisibility(View.VISIBLE);
+        ctx.findViewById(R.id.progressBar1).setVisibility(View.VISIBLE);
+        ctx.findViewById(R.id.imageView1).setVisibility(View.VISIBLE);
+        //show webview
+        ctx.findViewById(R.id.webview).setVisibility(View.GONE);
+    }*/
+
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        /*WebView webview = (WebView) view.findViewById(R.id.webview);
+        ImageView logo = (ImageView) view.findViewById(R.id.imageView1);
+        ProgressBar bar = (ProgressBar)view.findViewById(R.id.progressBar1);
+        TextView version = (TextView) view.findViewById(R.id.textView1);
+        view.setVisibility(0);
+        logo.setVisibility(10);
+        bar.setVisibility(10);
+        version.setVisibility(10);*/
+        //hide loading image
+        if(first) {
+            ctx.findViewById(R.id.textView1).setVisibility(View.GONE);
+            ctx.findViewById(R.id.progressBar1).setVisibility(View.GONE);
+            ctx.findViewById(R.id.imageView1).setVisibility(View.GONE);
+            //show webview
+            ctx.findViewById(R.id.webview).setVisibility(View.VISIBLE);
+        }
+    }
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Context context = view.getContext();

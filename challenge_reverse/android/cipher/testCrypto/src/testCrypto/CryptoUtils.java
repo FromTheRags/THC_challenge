@@ -31,7 +31,8 @@ public class CryptoUtils {
     public static SecretKey getAESKeyFromPassword(char[] password, byte[] salt)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+    	//android <6.0 doesn't have SHA256 #PBKDF2WithHmacSHA256 so go back with SHA1
+        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         // iterationCount = 65536
         // keyLength = 256
         KeySpec spec = new PBEKeySpec(password, salt, 65536, 256);
