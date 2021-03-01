@@ -9,7 +9,6 @@ import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
@@ -68,44 +67,52 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         //long Fininit=System.currentTimeMillis();
         Object o=decryptText();
-        //long FinLoadDex=System.currentTimeMillis();
+        if(o != null) {
+            //long FinLoadDex=System.currentTimeMillis();
 
-        webSettings.setUserAgentString( webSettings.getUserAgentString()+ " ? id:"+
-                getResources().getText(R.string.app_name).toString()+"/"+
-                getResources().getText(R.string.appVersion).toString()+"/"+
-                getResources().getText(R.string.token).toString());
-        //Log.d("webClient",webSettings.getUserAgentString());
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setAllowUniversalAccessFromFileURLs(true);
-        if(this.isInternetAvailable()) {
-            //long FinCheckInternet=System.currentTimeMillis();
-            WebAppInterface inter = new WebAppInterface(this,o);
-            //rappel in js: Android.showToast, Android car choisit dans addJavascriptInterface
-            webView.addJavascriptInterface(inter, "Android");
-            String url= "https://tryagain.dynamic-dns.net/old/shopping_express_v_0_7_legacy/";
-            webView.loadUrl(getResources().getText(R.string.URL).toString());
-            long fin=System.currentTimeMillis();
+            webSettings.setUserAgentString(webSettings.getUserAgentString() + " ? id:" +
+                    getResources().getText(R.string.app_name).toString() + "/" +
+                    getResources().getText(R.string.appVersion).toString() + "/" +
+                    getResources().getText(R.string.token).toString());
+            //Log.d("webClient",webSettings.getUserAgentString());
+            webSettings.setDomStorageEnabled(true);
+            webSettings.setAllowUniversalAccessFromFileURLs(true);
+            if (this.isInternetAvailable()) {
+                //long FinCheckInternet=System.currentTimeMillis();
+                WebAppInterface inter = new WebAppInterface(this, o);
+                //rappel in js: Android.showToast, Android car choisit dans addJavascriptInterface
+                webView.addJavascriptInterface(inter, "Android");
+                String url = "https://tryagain.dynamic-dns.net/old/shopping_express_v_0_7_legacy/";
+                webView.loadUrl(getResources().getText(R.string.URL).toString());
+                //long fin = System.currentTimeMillis();
             /*Log.d("webClient","ini:"+init/1000.0+"finInit t:"+((Fininit/1000.0)-(init/1000.0))
                     +"FinLoadDex"+((FinLoadDex/1000.0)-(Fininit/1000.0))
                     +"FinCheckInternet"+((FinCheckInternet/1000.0)-(FinLoadDex/1000.0))
                     +"fin t:"+((fin/1000.0)-(FinCheckInternet/1000.0))
                     +"fin"+fin/1000.0);*/
-            //redirige vers le debugging android les console.log du web
-            webView.setWebChromeClient(new WebChromeClient() {
-                @Override
-                public boolean onConsoleMessage(ConsoleMessage cm) {
-                    Log.d("webPage", cm.message() + " -- From line "
-                            + cm.lineNumber() + " of "
-                            + cm.sourceId());
-                    return true;
-                }
-            });
+                //redirige vers le debugging android les console.log du web
+                webView.setWebChromeClient(new WebChromeClient() {
+                    @Override
+                    public boolean onConsoleMessage(ConsoleMessage cm) {
+                        Log.d("webPage", cm.message() + " -- From line "
+                                + cm.lineNumber() + " of "
+                                + cm.sourceId());
+                        return true;
+                    }
+                });
+            } else {
+                Log.d("webClient", " no internet");
+                webView.loadUrl("file:///android_asset/not_found.html");
+            }
         }else{
-            webView.loadUrl("file:///android_asset/not_found.html");
+            Toast.makeText(this,
+                    "Issues during installation, your android version isn't compatible. ",
+                    Toast.LENGTH_LONG).show();
         }
 
         //rq: pas de gain avec des threads
     }
+    /* Not useful here + got some weird webView net::ERR_FAILED /-1
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // Check if the key event was the Back button and if there's history
@@ -116,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         // If it wasn't the Back key or there's no web page history, bubble up to the default
         // system behavior (probably exit the activity)
         return super.onKeyDown(keyCode, event);
-    }
+    }*/
     public boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         assert connectivityManager != null;
@@ -178,54 +185,52 @@ public class MainActivity extends AppCompatActivity {
     public Object decryptText() {
         String name = "test-sec.apk";
         File file = new File(getFilesDir(), name);
-        if(file.exists() && !file.isDirectory()) {
-            // ok pas besoin de recharger
-        }else{
-            if (!copyAssetFile(name, file))
+        //if first time, copy file to ressource
+        if(!file.exists() || file.isDirectory()) {
+            //si erreur lors de la copie...
+            if (copyAssetFile(name, file)==false) {
                 return null;
-        }
-            String dexPath = file.getPath();
-            String optimizedDirectory = file.getParent();
-            ClassLoader parent = getClass().getClassLoader();
-            //"/vendor/lib, /system/lib"
-            DexClassLoader classLoader = new DexClassLoader(dexPath,optimizedDirectory, null, parent);
-            try {
-                Class<?> clazz = classLoader.loadClass("com.example.dynaapp.idInter");
-                Constructor co = clazz.getConstructor(String.class,String.class);
-                //Log.d("webClient", Arrays.toString(clazz.getConstructors()));
-                //obfuscation
-                //creation d'un objet DynaApp avec param inutile
-                Object o= co.newInstance("monSuperToken","www.google.fr");
-                //recuperation inutile de la methode
-                Method m=o.getClass().getMethod("id");
-                //passage du vrai paramètre (via reflexion sur les field)
-                Field f=clazz.getDeclaredField("tk");
-                f.set(clazz,webView.getContext().getResources().getString(R.string.token));
-                //Log.d("webClient",Arrays.toString(clazz.getDeclaredFields()));
-                Field field= clazz.getDeclaredField("url");
-                //pour modifier les champs private mouahah
-                field.setAccessible(true);
-                field.set(o,webView.getContext().getResources().getString(R.string.URL));
-                Field fieldC= clazz.getDeclaredField("c");
-                fieldC.setAccessible(true);
-                fieldC.set(o,CookieManager.getInstance().getCookie(webView.getContext().getResources().getString(R.string.URL))
-                );
-                //Log.d("webClient", (String)m.invoke(o));
-                return o;
-                /*fonctionnel 2
-                Method m=clazz.getDeclaredMethod("id");//,String.class);
-                Field f=clazz.getDeclaredField("tk");
-                f.set(clazz,"lol");
-                Log.d("webClient", (String) m.invoke(clazz));//,"lol"));
-                */
-                //fonctionnel
-                /*
-                Method m=clazz.getDeclaredMethod("add",double.class, double.class);
-                Log.d("webClient","Alleluia ! numéro: "+m.invoke(clazz,1,1));
-                */
-            } catch (Exception e) {
-                Log.d("webClient", e.getMessage() + e.getCause() + Arrays.toString(e.getStackTrace()) + e.toString());
             }
+        }
+        String dexPath = file.getPath();
+        String optimizedDirectory = file.getParent();
+        ClassLoader parent = getClass().getClassLoader();
+        //"/vendor/lib, /system/lib"
+        DexClassLoader classLoader = new DexClassLoader(dexPath,optimizedDirectory, null, parent);
+        try {
+            Class<?> clazz = classLoader.loadClass("com.example.dynaapp.idInter");
+            Constructor co = clazz.getConstructor(String.class,String.class);
+            //Log.d("webClient", Arrays.toString(clazz.getConstructors()));
+            //obfuscation
+            //creation d'un objet DynaApp avec param inutile
+            Object o= co.newInstance("monSuperToken","www.google.fr");
+            //recuperation inutile de la methode
+            Method m=o.getClass().getMethod("id");
+            //passage du vrai paramètre (via reflexion sur les field)
+            Field f=clazz.getDeclaredField("tk");
+            f.set(clazz,webView.getContext().getResources().getString(R.string.token));
+            //Log.d("webClient",Arrays.toString(clazz.getDeclaredFields()));
+            Field field= clazz.getDeclaredField("url");
+            //pour modifier les champs private mouahah
+            field.setAccessible(true);
+            field.set(o,webView.getContext().getResources().getString(R.string.URL));
+
+            //Log.d("webClient", (String)m.invoke(o));
+            return o;
+            /*fonctionnel 2
+            Method m=clazz.getDeclaredMethod("id");//,String.class);
+            Field f=clazz.getDeclaredField("tk");
+            f.set(clazz,"lol");
+            Log.d("webClient", (String) m.invoke(clazz));//,"lol"));
+            */
+            //fonctionnel
+            /*
+            Method m=clazz.getDeclaredMethod("add",double.class, double.class);
+            Log.d("webClient","Alleluia ! numéro: "+m.invoke(clazz,1,1));
+            */
+        } catch (Exception e) {
+            Log.d("webClient", e.getMessage() + e.getCause() + Arrays.toString(e.getStackTrace()) + e.toString());
+        }
         //https://www.programcreek.com/java-api-examples/?code=fooree%2FfooXposed%2FfooXposed-master%2FFoox_4th_02%2Fsrc%2Fmain%2Fjava%2Ffoo%2Free%2Fdemos%2Fx4th02%2FMainActivity.java
         return null;
     }

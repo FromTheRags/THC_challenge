@@ -29,6 +29,7 @@ public class WebClientViewMine extends WebViewClient {
         if (!url.endsWith("login.html")) {
             if (url.endsWith("error.html")) {
                 webview.stopLoading();
+                Log.d("webClient", " loadRessourceNotFound");
                 webview.loadUrl("file:///android_asset/not_found.html");
             }
         }
@@ -65,6 +66,7 @@ public class WebClientViewMine extends WebViewClient {
             //show webview
             ctx.findViewById(R.id.webview).setVisibility(View.VISIBLE);
         }
+        super.onPageFinished(view,url);
     }
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -91,7 +93,7 @@ public class WebClientViewMine extends WebViewClient {
     @Override
     public void onReceivedError(final WebView webview, WebResourceRequest request,
                                 WebResourceError error) {
-
+        Log.d("webClient", " onreceivedError");
         webview.loadUrl("file:///android_asset/not_found.html");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Log.d("webClient","Erreur loading page "+ error.getDescription()+ " /"+error.getErrorCode());
