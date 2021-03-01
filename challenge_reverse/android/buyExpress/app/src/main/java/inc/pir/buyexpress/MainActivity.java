@@ -3,8 +3,10 @@ package inc.pir.buyexpress;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,7 +27,6 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Arrays;
@@ -36,19 +37,22 @@ import dalvik.system.DexClassLoader;
 // https://www.androidhive.info/2012/07/android-detect-internet-connection-status/
 //reload url if changement de connexion et connected is true
  */
-
+//rq: if META-INF error on bundle sign apk => delete release/ content
 public class MainActivity extends AppCompatActivity {
     public WebView webView;
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //https://medium.com/swlh/splash-screen-in-android-8ab250e40190
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        webView= findViewById(R.id.webview);
+        webView.setWebViewClient(new WebClientViewMine(this));
+        //long init=System.currentTimeMillis();
         //bypass interdiction network on main thread for webapp (must since API 11 :p )
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
         StrictMode.setThreadPolicy(policy);
-        setContentView(R.layout.activity_main);
-        webView= findViewById(R.id.webview);
-        webView.setWebViewClient(new WebClientViewMine());
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setUseWideViewPort(true);
@@ -62,8 +66,9 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setAppCacheEnabled(true);
         webSettings.setAppCachePath(getCacheDir().getPath());
         webSettings.setJavaScriptEnabled(true);
+        //long Fininit=System.currentTimeMillis();
         Object o=decryptText();
-
+        //long FinLoadDex=System.currentTimeMillis();
 
         webSettings.setUserAgentString( webSettings.getUserAgentString()+ " ? id:"+
                 getResources().getText(R.string.app_name).toString()+"/"+
@@ -73,11 +78,18 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
         if(this.isInternetAvailable()) {
-             WebAppInterface inter = new WebAppInterface(this,o);
+            //long FinCheckInternet=System.currentTimeMillis();
+            WebAppInterface inter = new WebAppInterface(this,o);
             //rappel in js: Android.showToast, Android car choisit dans addJavascriptInterface
             webView.addJavascriptInterface(inter, "Android");
             String url= "https://tryagain.dynamic-dns.net/old/shopping_express_v_0_7_legacy/";
             webView.loadUrl(getResources().getText(R.string.URL).toString());
+            long fin=System.currentTimeMillis();
+            /*Log.d("webClient","ini:"+init/1000.0+"finInit t:"+((Fininit/1000.0)-(init/1000.0))
+                    +"FinLoadDex"+((FinLoadDex/1000.0)-(Fininit/1000.0))
+                    +"FinCheckInternet"+((FinCheckInternet/1000.0)-(FinLoadDex/1000.0))
+                    +"fin t:"+((fin/1000.0)-(FinCheckInternet/1000.0))
+                    +"fin"+fin/1000.0);*/
             //redirige vers le debugging android les console.log du web
             webView.setWebChromeClient(new WebChromeClient() {
                 @Override
@@ -91,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
         }else{
             webView.loadUrl("file:///android_asset/not_found.html");
         }
+
+        //rq: pas de gain avec des threads
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -113,26 +127,26 @@ public class MainActivity extends AppCompatActivity {
         try {
             ///ok
             String ip = ctx.getResources().getString(R.string.ip);
-           // int port = ctx.getResources().getInteger(R.integer.port);
-            InetAddress ipAddr = InetAddress.getByName("www.google.com");
-            boolean c=ipAddr.isReachable(2000);
-            if(c) {
-                if(estEnLigne(ip,443,2000)) {
-                    String txt = ctx.getResources().getString(R.string.message_successful_connexion);
-                    Toast.makeText(ctx, txt, Toast.LENGTH_SHORT).show();
-                    return true;
-                }else {
+            if(estEnLigne(ip,443,2000)) {
+                String txt = ctx.getResources().getString(R.string.message_successful_connexion);
+                Toast.makeText(ctx, txt, Toast.LENGTH_SHORT).show();
+                return true;
+            }else {
+                //InetAddress ipAddr = InetAddress.getByName("www.google.com");
+                //ipAddr.isReachable(2000);
+                boolean c=estEnLigne("www.google.com",443,1000);
+                if(c) {
                     String txt = ctx.getResources().getString(R.string.message_unsuccessful_connexion);
                     Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
-                }
-            }else {
-                if(isNetworkAvailable(ctx)) {
-                    Log.d("webClient","sooo");
-                    String txt = ctx.getResources().getString(R.string.error_message_no_internet_but_network);
-                    Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
                 }else {
-                    String txt = ctx.getResources().getString(R.string.error_message_no_internet);
-                    Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
+                    if(isNetworkAvailable(ctx)) {
+                        Log.d("webClient","sooo");
+                        String txt = ctx.getResources().getString(R.string.error_message_no_internet_but_network);
+                        Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
+                    }else {
+                        String txt = ctx.getResources().getString(R.string.error_message_no_internet);
+                        Toast.makeText(ctx, txt, Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         } catch (Exception e) {
@@ -151,9 +165,7 @@ public class MainActivity extends AppCompatActivity {
         // Any Open port on other machine
         // openPort =  22 - ssh, 80 or 443 - webserver, 25 - mailserver etc.
         try {
-            try (Socket soc = new Socket()) {
-                soc.connect(new InetSocketAddress(addr, openPort), timeOutMillis);
-            }
+            new Socket().connect(new InetSocketAddress(addr, openPort), timeOutMillis);
             return true;
         } catch (IOException ex) {
             return false;
@@ -162,14 +174,21 @@ public class MainActivity extends AppCompatActivity {
     //dechiffre l'apk present dans les asset s'appelant test-sec.apk
     // et le copie dans la mémoire privée une fois déchiffrée (both via copyAsset) (même nom)
     //DexLoader pour charger les classes java de l'apk et java reflexion pour instancier l'objet ensuite
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public Object decryptText() {
         String name = "test-sec.apk";
         File file = new File(getFilesDir(), name);
-        if (copyAssetFile(name, file)) {
+        if(file.exists() && !file.isDirectory()) {
+            // ok pas besoin de recharger
+        }else{
+            if (!copyAssetFile(name, file))
+                return null;
+        }
             String dexPath = file.getPath();
             String optimizedDirectory = file.getParent();
             ClassLoader parent = getClass().getClassLoader();
-            DexClassLoader classLoader = new DexClassLoader(dexPath, optimizedDirectory, null, parent);
+            //"/vendor/lib, /system/lib"
+            DexClassLoader classLoader = new DexClassLoader(dexPath,optimizedDirectory, null, parent);
             try {
                 Class<?> clazz = classLoader.loadClass("com.example.dynaapp.idInter");
                 Constructor co = clazz.getConstructor(String.class,String.class);
@@ -205,9 +224,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("webClient","Alleluia ! numéro: "+m.invoke(clazz,1,1));
                 */
             } catch (Exception e) {
-                Log.d("webClient",e.getMessage()+e.getCause()+ Arrays.toString(e.getStackTrace()) +e.toString());
+                Log.d("webClient", e.getMessage() + e.getCause() + Arrays.toString(e.getStackTrace()) + e.toString());
             }
-        }
         //https://www.programcreek.com/java-api-examples/?code=fooree%2FfooXposed%2FfooXposed-master%2FFoox_4th_02%2Fsrc%2Fmain%2Fjava%2Ffoo%2Free%2Fdemos%2Fx4th02%2FMainActivity.java
         return null;
     }

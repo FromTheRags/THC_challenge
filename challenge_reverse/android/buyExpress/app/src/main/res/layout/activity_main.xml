@@ -1,17 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    a:layout_width="fill_parent"
+    a:layout_height="fill_parent"
+    a:orientation="vertical"
     tools:context=".MainActivity">
 
+    <!--    a:background="@mipmap/logo"-->
+    <!--a:background="#aaaaaa"-->
     <WebView
-        android:id="@+id/webview"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</android.support.constraint.ConstraintLayout>
+        a:id="@+id/webview"
+        a:layout_width="fill_parent"
+        a:layout_height="fill_parent"
+        a:visibility="gone"
+        />
+
+    <ImageView
+        a:id="@+id/imageView1"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_alignParentTop="true"
+        a:layout_centerHorizontal="true"
+        a:layout_marginTop="46dp"
+        a:visibility="visible"
+        a:src="@mipmap/logo" />
+
+    <ProgressBar
+        a:id="@+id/progressBar1"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_below="@+id/imageView1"
+        a:visibility="visible"
+        a:layout_centerHorizontal="true" />
+
+    <TextView
+        a:id="@+id/textView1"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_alignParentBottom="true"
+        a:layout_alignParentRight="true"
+        a:layout_marginBottom="13dp"
+        a:layout_marginRight="13dp"
+        a:text="version 1.1"
+        a:visibility="visible"
+        a:textAppearance="?android:attr/textAppearanceSmall"
+        a:textColor="#444444" />
+
+</RelativeLayout>
+    <!--
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <WebView
+            android:id="@+id/webview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@mipmap/logo" />
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="version 1.1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#444444" />
+    </android.support.constraint.ConstraintLayout>
+    -->

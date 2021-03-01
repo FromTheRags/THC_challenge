@@ -26,6 +26,8 @@ https://www.blackhat.com/presentations/bh-dc-09/Marlinspike/BlackHat-DC-09-Marli
 https://www.samsclass.info/123/proj10/p21-sslstrip.html
 (best)
 http://www.octetmalin.net/linux/tutoriels/sslstrip.php
+V2 (bypass HSTS):
+https://github.com/singe/sslstrip2/
 =>
 [SslStrip]
     [Conf]
