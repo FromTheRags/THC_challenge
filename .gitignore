@@ -10,3 +10,7 @@ challenge_reverse/android/buyExpress/captures
 challenge_reverse/android/buyExpress.externalNativeBuild
 
 challenge_reverse/~$lution.docx
+
+challenge_reseau_uaf/docker/.net_conf_save
+challenge_reseau_uaf/docker/private/keys/*
+challenge_reseau_uaf/docker/ftp/keys/*
