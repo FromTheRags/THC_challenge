@@ -29,7 +29,7 @@ Bonus: attaquer les fichiers smali (https://virtualabs.fr/Reversing-d-applicatio
 Methode d2j + jd-gui:
 	https://www.brightdevelopers.com/reverse-engineer-android-apk/
 	=> unzip l'apk (renommer en zip)
-	=> .\d2j-dex2jar.bat ..\..\apk\app-debug\classes.dex (https://github.com/pxb1988/dex2jar)
+	=> .\d2j-dex2jar.bat ..\..\apk\app-debug\classes.dex (https://github.com/pxb1988/dex2jar)(si dex2jar fail: https://github.com/strazzere/dehoser)
 	ou direct: 
 	==>  .\d2j-dex2jar.bat -f ..\..\apk\app-debug.apk
 	 https://github.com/java-decompiler/jd-gui 
@@ -63,3 +63,13 @@ Obfuscation:
 	            minifyEnabled true
 	            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        
+Pour aller plus loin:
+- String encryption
+- NDK using C and C++ to put your application core and secure part of code in .so files ( pre-compiled native library (C, C++, JNI, NDK))
+- Chargement de classes/fichier par URL #server
+- APK repackaging (https://github.com/iKiwiSec/KiwiApkProtect): .so chiffrement, check signature assets & string, anti dex2jar
+https://quixxisecurity.com/shield/#reverse-engineer-protection
+check & kill debugging: This can be determined by checking the process status flags or using other techniques like comparing the return value of ptrace attach,
+checking parent process, blacklist debuggers in the process list or comparing timestamps on different places of the program.
+

