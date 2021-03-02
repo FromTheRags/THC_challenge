@@ -9,6 +9,8 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 //gcc -fPIE -fstack-protector-all -D_FORTIFY_SOURCE=2 -Wl,-z,now -Wl,-z,relro -o uaf code.c
+//sudo bash -c "echo 0 > /proc/sys/kernel/randomize_va_space"
+//gcc -fno-stack-protector -D_FORTIFY_SOURCE=2 -Wl,-z,now -Wl,-z,relro -o uaf code.c
 /* but: écrire le shellcode dans le name interface+ free it+ new interface avec name =65 caractères (shellcode[60]+@)//allocate(malloc) physical connexion with name=0x pointing to begin @ of info #ASLR leak,
 +call turnOn sur la 1ere interface => exec shellcode
 */
@@ -39,8 +41,8 @@ struct physical{
  //64 sinon
 typedef struct  __attribute__((__packed__))interface
 {
+	char *ip; //taille variable selon v4 or v6
     char name[NAME_SIZE];
-    char *ip; //taille variable selon v4 or v6
     void (*turnOn)(struct interface*);
 } Interface;
 void showInterface(Interface *i);
@@ -57,10 +59,14 @@ Interface* newInterface(char* name,char *ip, void (*on)(struct interface*))
     inter->turnOn=on;
     return inter;
 }
+void victory(void){
+
+	printf("HOURRA! \n");
+}
 //leakage position last champ de la structure #mauvais %p avec & en trop => on peut retrouver le debut de buffer en faisant -60
 void showInterface(Interface *i)
 {
-    printf("\n name: %s ip: %s turnOn: %p \n",i->name,i->ip, &i->turnOn);
+    printf("\n name: %s ip: %s turnOn: %p @: %p @V: %p\n",i->name,i->ip, &i->turnOn,i,victory);
 }
 void endOfLine(char* line)
 {
@@ -70,7 +76,7 @@ void endOfLine(char* line)
 }
 
 void destroy(Interface* inter){
-    free(inter->name);
+    free(inter->ip);
     free(inter);
     puts("I forgot that interface !");
 }
