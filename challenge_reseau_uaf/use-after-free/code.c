@@ -144,6 +144,7 @@ The purpose of this is to speed up my network configuration.");
  3: Turn on Interface(apply to real) \n \
  4: Forget selected virtual interface \n \
  5: Show current Interface configuration \n \
+ 6: get all \n \
  Your choice ?  \n");
         //\n5: Select Physical Interface info \n6: Attach Interface to physical \n7:Forget physical interface\n0: Quit");
         order = getc(stdin);
@@ -249,6 +250,11 @@ The purpose of this is to speed up my network configuration.");
                 break;
             }
             showInterface(inter);
+            break;
+              case '6':
+			           for(int i=0; i<10; i++){
+						   printf("inter: %d, %p, %p",i,inters[i],inters[i]!=NULL ? inters[i]->turnOn:0);
+					   }
             break;
         default:
             end = 1;
