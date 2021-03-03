@@ -56,6 +56,6 @@ The first time :
 	./start_network.sh
 
 When you changed the configuration (Dockerfile or script used by Dockerfile) :
-
+#nice
 	./update_network.sh
 
