@@ -1,7 +1,7 @@
 #!/bin/sh
 
-sudo ip route del 192.168.2.0/24
-sudo ip route del 192.168.3.0/24
+sudo ip route del 10.42.2.0/24
+sudo ip route del 10.42.3.0/24
 
 sudo docker network rm external
 sudo docker network rm dmz

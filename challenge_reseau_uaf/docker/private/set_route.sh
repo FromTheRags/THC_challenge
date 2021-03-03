@@ -1,5 +1,5 @@
 #!/bin/sh
 
 ip route del default
-ip route add default via 192.168.3.2
+ip route add default via 10.42.3.2
 

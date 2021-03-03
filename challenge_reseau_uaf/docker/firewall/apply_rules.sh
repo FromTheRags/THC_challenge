@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # ip addresses
-NET_DMZ=192.168.2.0/24
-NET_INT=192.168.3.0/24
+NET_DMZ=10.42.2.0/24
+NET_INT=10.42.3.0/24
 
 # protocols ports
 PT_FTP=21

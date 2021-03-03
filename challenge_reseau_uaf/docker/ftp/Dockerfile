@@ -31,4 +31,5 @@ RUN mkdir /home/ouioui/.ssh; mv ouioui_ssh_key /home/ouioui/.ssh/id_rsa && chown
 
 # start ftp and ssh daemons (called at container startup)
 ENTRYPOINT (vsftpd &); service start ssh; sleep infinity
+#libc6-compat
 
