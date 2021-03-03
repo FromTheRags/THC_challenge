@@ -37,12 +37,12 @@ struct physical{
  0 (select 1)
  3 (turn on)
  */
- #define NAME_SIZE 48
+ #define NAME_SIZE 58
  //64 sinon
 typedef struct  __attribute__((__packed__))interface
 {
-	char *ip; //taille variable selon v4 or v6
     char name[NAME_SIZE];
+	char *ip; //taille variable selon v4 or v6
     void (*turnOn)(struct interface*);
 } Interface;
 void showInterface(Interface *i);
@@ -253,8 +253,9 @@ The purpose of this is to speed up my network configuration.");
             break;
               case '6':
 			           for(int i=0; i<10; i++){
-						   printf("inter: %d, %p, %p",i,inters[i],inters[i]!=NULL ? inters[i]->turnOn:0);
+						   printf("inter: %d, %p, %p  @Name: %p\n",i,inters[i],inters[i]!=NULL ? inters[i]->turnOn:0,inters[i]!=NULL ? inters[i]->name:0);
 					   }
+                        printf("\n Valeur name 2: %s", inters[2]->name);
             break;
         default:
             end = 1;
