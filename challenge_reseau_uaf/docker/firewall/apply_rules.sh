@@ -23,7 +23,9 @@ iptables -t filter -P OUTPUT DROP
 iptables -t filter -P FORWARD DROP
 
 # white list
-# authorize established and related connections
+# authorize established and related connections for all chains
+iptables -t filter -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -t filter -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -t filter -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
 # from external to dmz : ftp and ssh
 iptables -t filter -A FORWARD -p tcp --syn --sport $PT_SRC ! -s $NET_INT --dport $PT_TWO -d $NET_DMZ -m state --state NEW -j ACCEPT
@@ -35,6 +37,8 @@ iptables -t filter -A FORWARD -p tcp --dport $PT_SRC -d $NET_DMZ --sport $PT_RG0
 iptables -t filter -A FORWARD -p tcp --syn --sport $PT_SRC -s $NET_DMZ --dport $PT_SSH -d $NET_INT -m state --state NEW -j ACCEPT
 # from internal to any : any
 iptables -t filter -A FORWARD -p tcp --syn --sport $PT_SRC -s $NET_INT --dport $PT_RG0 -m state --state NEW -j ACCEPT
+# allow outgoing connections
+iptables -t filter -A OUTPUT -p tcp --syn -m state --state NEW -j ACCEPT
 # allow icmp
 #iptables -t filter -A FORWARD -p icmp -j ACCEPT
 
