@@ -6,6 +6,7 @@ fi
 sudo sysctl -w net.ipv4.ip_forward=1
 sudo docker start firewall_container
 sudo docker exec firewall_container /root/apply_rules.sh
+sudo docker exec firewall_container /root/set_route.sh
 sudo docker start ftp_container
 sudo docker exec ftp_container /root/set_route.sh
 sudo docker start private_container
