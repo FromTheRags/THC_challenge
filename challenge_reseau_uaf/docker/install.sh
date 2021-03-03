@@ -7,7 +7,8 @@ sudo apt-get install -yq \
 	curl \
 	gnupg-agent \
 	software-properties-common \
-	openssh
+	openssh \
+	netcat
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 sudo apt-key fingerprint 0EBFCD88
 sudo add-apt-repository \
