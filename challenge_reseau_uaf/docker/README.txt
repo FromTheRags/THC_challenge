@@ -29,7 +29,7 @@ Restart the containers (stop and start) :
 
 	./restart_network.sh
 
-Kill the containers (the dirty way ) :
+Kill the containers (the dirty way) :
 
 	./kill_network.sh
 
@@ -43,7 +43,7 @@ Update the containers (kill, delete, build and start again) :
 
 Access a shell inside a container :
 
-	./enter_<machine_name> # <machine_name> = "firewall", "attack", "ftp" or "private"
+	./enter_<machine_name>.sh	# <machine_name> = "firewall", "attack", "ftp" or "private"
 
 
 MOST COMMON WORKFLOW :
@@ -57,5 +57,5 @@ The first time :
 
 When you changed the configuration (Dockerfile or script used by Dockerfile) :
 
-	./update_network
+	./update_network.sh
 
