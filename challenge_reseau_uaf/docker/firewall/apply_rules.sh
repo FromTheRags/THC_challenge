@@ -38,7 +38,9 @@ iptables -t filter -A FORWARD -p tcp --syn --sport $PT_SRC -s $NET_DMZ --dport $
 # from internal to any : any
 iptables -t filter -A FORWARD -p tcp --syn --sport $PT_SRC -s $NET_INT --dport $PT_RG0 -m state --state NEW -j ACCEPT
 # allow outgoing connections
-iptables -t filter -A OUTPUT -p tcp --syn -m state --state NEW -j ACCEPT
+#iptables -t filter -A OUTPUT -p tcp --syn -m state --state NEW -j ACCEPT
+# allow loopback
+#iptables -t filter -A INPUT -i lo -j ACCEPT
 # allow icmp
 #iptables -t filter -A FORWARD -p icmp -j ACCEPT
 

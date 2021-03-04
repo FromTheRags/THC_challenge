@@ -32,7 +32,8 @@ COPY build_uaf_vulnerable_program.sh ./
 RUN sh build_uaf_vulnerable_program.sh; rm -f uaf_vulnerable_program.c; rm -f build_uaf_vulnerable_program.sh
 
 # copy flag
-#COPY flag
+COPY flag.txt ./
+RUN chown root flag.txt; chmod 700 flag.txt
 
 # start sshd (executed on startup)
 ENTRYPOINT rc-service sshd stop; rc-service sshd start; sleep infinity
