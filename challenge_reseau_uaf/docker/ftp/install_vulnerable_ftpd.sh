@@ -8,12 +8,15 @@ install -v -d -m 0755 /usr/share/vsftpd/empty
 install -v -d -m 0755 /var/ftp/empty
 install -v -d -m 0755 /home/ftp
 
-groupadd -g 47 vsftpd
-groupadd -g 48 ftp
+addgroup -g 2121 vsftpd
+addgroup -g 21 ftp
 
-useradd -c vsftpd_user -d /root -g vsftpd -s /bin/false -u 47 vsftpd
-useradd -c anonymous_user -d /home/ftp -g ftp -s /bin/false -u 48 ftp
+adduser -h /root -g vsftpd -s /bin/false -u 2121 vsftpd
+adduser -h /home/ftp -g vsftpd -s /bin/false -u 21 ftp
 
+sed -i 's/WTMPX_FILE/MAP_FILE/g' sysdeputil.c
+sed -i 's/F_SETLK64/F_SETLK/g' ptracesandbox.c
+sed -i 's/F_SETLKW64/F_SETLKW/g' ptracesandbox.c
 sed -i 's/lcrypt/lpam/g' Makefile
 make
 
