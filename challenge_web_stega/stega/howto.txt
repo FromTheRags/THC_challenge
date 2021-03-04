@@ -1,0 +1,21 @@
+[steg]
+cat chess.jpg starwars.zip >cat.jpg
+apt install steghide 
+steghide embed -cf magical.jpg -ef cat.jpg -sf full.jpg -p "magical"
+-> magical (password)
+(extraction)
+steghide extract -sf full.jpg -xf extract.jpg -p "magical"
+unzip extract.jpg
+
+Links:
+base:
+http://steghide.sourceforge.net/documentation/manpage.php
+https://www.unixmen.com/steganography-in-ubuntu-hide-your-files-inside-an-image/
+https://www.apprendre-en-ligne.net/crypto/images/texteimage.html
+adv:
+(attack: LSB amplifier +chi2) http://www.guillermito2.net/stegano/tools/ 
+https://k-lfa.info/tools-stegano/
+=>stegdetect stego.jpg
+www.caesum.com/handbook/Stegsolve.jar
+https://github.com/bannsec/stegoVeritas
+
