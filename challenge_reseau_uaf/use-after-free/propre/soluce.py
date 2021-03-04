@@ -11,7 +11,7 @@ python3 -m pip install --upgrade pip
 python3 -m pip install --upgrade pwntools
 '''
 
-p = pwn.process("./uaf")
+p = pwn.process("./net_int_handler")
 p.recv()
 
 print("Creation de 2 interfaces...") 
