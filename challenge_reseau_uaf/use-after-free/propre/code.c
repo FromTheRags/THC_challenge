@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 
 #define BUFLEN 64
-#define NAME_SIZE 58
+#define NAME_SIZE 88
  //64 sinon
 typedef struct  __attribute__((__packed__))interface
 {

