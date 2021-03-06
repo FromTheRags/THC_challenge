@@ -9,7 +9,6 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 
-#define BUFLEN 64
 #define NAME_SIZE 88
  //64 sinon
 typedef struct  __attribute__((__packed__))interface
@@ -149,13 +148,13 @@ The purpose of this is to speed up my network configuration.");
             break;
         case '1':
             puts("Give the name of the real interface associated: ");
-            char name[BUFLEN] = {0};
-            fgets(name, BUFLEN-1, stdin);
+            char name[NAME_SIZE] = {0};
+            fgets(name, NAME_SIZE-1, stdin);
             endOfLine(name);
 
-            char ip[BUFLEN*3] = {0};
+            char ip[NAME_SIZE*2] = {0};
             puts("Give it an ip: ");
-            fgets(ip, BUFLEN*3 -1, stdin);
+            fgets(ip, NAME_SIZE*2 -1, stdin);
             endOfLine(ip);
 
             puts("Select a 'turn on' method for the virtual interface:\n1:old school 2:modern school ?(default)\n");
