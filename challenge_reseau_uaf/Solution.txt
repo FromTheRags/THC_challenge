@@ -37,3 +37,13 @@ cp /home/ouioui/.ssh/publickey ~/.ssh/
 3) ssh ouioui@192.168.3.1
 
 Getting root on last:
+There is a setuid program in /home/ouoi: net_int_handler
+This program seems to be in development and offer multi option to manage network
+It seems the memory management isn't over yet => use-after-free ? There is creation and destruction at will of element
+Ghidra gives us the code of creation of interface: size struct: 96 (0x60) size name: 88 (0x58) + 2 pointers (in 32 bits =4)
+The programs uses stncpy and strndup
+
+Strndup used with the good size could allow us to reuse the space of an old freed interface ...(0x60) and use the function pointer (written with strndup) to exec what we want
+The technical details can be found in use-after-free/propre/soluce.py. It uses the pointer to go at the begining of the name buffer, written with a shellcode with setreuid(0)
+and get a root shell.
+The flag is flag.txt in /root

@@ -3,11 +3,11 @@ zip starwars.zip starwars.txt
 cat chess.jpg starwars.zip >cat.jpg
 apt install steghide 
 steghide embed -cf magical.jpg -ef cat.jpg -sf full.jpg -p "magical"
--> magical (password)
-(extraction)
+
+[unsteg]
 steghide extract -sf full.jpg -xf extract.jpg -p "magical"
 unzip extract.jpg
-
+cat starwars.txt
 Links:
 base:
 http://steghide.sourceforge.net/documentation/manpage.php
