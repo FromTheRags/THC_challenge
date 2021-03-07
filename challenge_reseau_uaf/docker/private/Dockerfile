@@ -1,6 +1,9 @@
 # get alpine 3.13.2 32 bits with useful tools
 FROM generic_alpine
 
+# set password
+RUN echo "root:agoodpasswordforaprivateservertopreventanattack!!!" | chpasswd
+
 # cd /root
 WORKDIR /root
 

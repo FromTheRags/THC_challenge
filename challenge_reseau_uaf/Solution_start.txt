@@ -12,7 +12,7 @@ passwd root
 2)Allow root ssh login:
 echo PermitRootLogin yes >>/etc/ssh/sshd_config
 3)Restart service
-/etc/init.d/ssh restart
+rc-service sshd restart
 
 On another shell:
 ssh root@ip_ftp 
@@ -32,8 +32,10 @@ Ssh connexion:
 1)Password is not know... maybe there is a certificate connexion for an user ?
 2) seek other users : ls /home: ftp garfield john martine ouioui
 .ssh folders: ouioui have one ssh key !
-Goind to steal him...
+Going to steal him...
 cp /home/ouioui/.ssh/publickey ~/.ssh/
+Or impersonate him :
+su ouioui
 3) ssh ouioui@192.168.3.1
 
 Getting root on last:

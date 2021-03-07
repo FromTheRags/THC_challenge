@@ -2,7 +2,7 @@
 FROM generic_alpine
 
 # set password
-RUN echo "root:agoodpasswordforaproftpserverversion3topreventanyattackbecause" | chpasswd
+RUN echo "root:agoodpasswordforavsftpdserverversion3topreventanyattackbecause" | chpasswd
 
 # cd /root
 WORKDIR /root

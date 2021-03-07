@@ -24,10 +24,10 @@ CREATE TABLE IF NOT EXISTS Products (
 
 -- radoteurs
 INSERT INTO Users(Login, Password, Description) VALUES ('admin', 'radoteurs', 'Papa depuis septembre 2010, j\'ai un fils aîné qui s\'appelle Théophile');
--- radiation
-INSERT INTO Users(Login, Password, Description) VALUES ('lucie', 'radiation', 'Je m\'appelle Lucie et j\'aime les tapis');
--- radiateur
-INSERT INTO Users(Login, Password, Description) VALUES ('raoul', 'radiateur', 'Je m\'appelle Raoul et j\'aime les poules');
+-- ratiboise
+INSERT INTO Users(Login, Password, Description) VALUES ('lucie', 'ratiboise', 'Je m\'appelle Lucie et j\'aime les tapis');
+-- rateliers
+INSERT INTO Users(Login, Password, Description) VALUES ('raoul', 'rateliers', 'Je m\'appelle Raoul et j\'aime les poules');
 
 
 INSERT INTO Products(Name, Description, Price, QuantityAvailable) VALUES ('Hat', 'A nice little hat.', 15.49, 4);
