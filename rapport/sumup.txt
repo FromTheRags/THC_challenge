@@ -1,0 +1,15 @@
+Challenge reverse_android__web:
+
+Le but est de reverse une application android (webapp) pour trouver comment elle s'authentifie auprès du site web associé (classes chiffrées, plusieurs méthodes).
+Il faut ensuite trouver l'ancienne version du site et s'y connecter pour avoir un indice sur le mot de passe du site principal.
+Une dernière faille permet d'acheter gratuitement le flag depuis le site.
+
+Challenge reseau_uaf:
+
+Le but est de pénétrer l'architecture interne d'un serveur via les services exposés. Un scan interne du réseau révéle un firewall et un serveur ssh.
+Après connexion au service ssh (par clés), il faut  utiliser un programme setuid pour devenir root (uaf) et récupérer le flag. 
+
+Challenge web_stega:
+
+Le but est de téléverser un webshell sur un site de photos, puis de scanner le reseau. Service ssh et site interne disponible. 
+Une image avec de la steganographie sur le site interne permet d'obtenir le mot de passe ssh et d'accéder au flag. 
