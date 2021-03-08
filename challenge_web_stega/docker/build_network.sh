@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# generate stega image
+cd private/stega
+sh stega.sh
+cd ../..
+
 # build images
 sudo docker build ./generic_alpine -t generic_alpine
 sudo docker build ./firewall -t firewall
