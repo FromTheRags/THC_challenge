@@ -10,8 +10,8 @@ WORKDIR /root
 # set prompt
 RUN echo "PS1='\u@private:\w\$ '" >> .bashrc
 
-# add test page
-RUN echo "<html><body><h1>It works too!</h1></body></html>" > /var/www/localhost/htdocs/index.html
+# add web page
+COPY web_site/index.html /var/www/localhost/htdocs
 
 # add stega image
 COPY stega/magical.jpg .
@@ -24,6 +24,7 @@ rm -f magical.jpg; \
 rm -f chess.jpg; \
 rm -f cat.jpg; \
 rm -f starwars.txt; \
+rm -f starwars.zip; \
 mv it_s_magical.jpg /var/www/localhost/htdocs
 
 # configure ssh to allow root login
