@@ -12,6 +12,7 @@ RUN echo "PS1='\u@private:\w\$ '" >> .bashrc
 
 # add web page
 COPY web_site/index.html /var/www/localhost/htdocs
+COPY web_site/bkstar.gif /var/www/localhost/htdocs
 
 # add stega image
 COPY stega/magical.jpg .
@@ -26,6 +27,9 @@ rm -f cat.jpg; \
 rm -f starwars.txt; \
 rm -f starwars.zip; \
 mv it_s_magical.jpg /var/www/localhost/htdocs
+
+# add flag
+COPY flag.txt .
 
 # configure ssh to allow root login
 RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config

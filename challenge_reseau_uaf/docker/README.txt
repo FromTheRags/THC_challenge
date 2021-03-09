@@ -1,9 +1,10 @@
 SYSTEM REQUIREMENTS :
 
 Debian / Ubuntu (wsl2 supported)
-#https://docs.docker.com/engine/install/ubuntu/
-unzip
-chmod -R +x *
+
+Run :
+
+	chmod -R 755 .
 
 LIST OF COMMANDS :
 
