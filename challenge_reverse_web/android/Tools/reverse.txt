@@ -41,6 +41,8 @@ Autres:
 	Procyon https://github.com/mstrobel/procyon/wiki/Java-Decompiler (not working at that time)
 	CFR: https://github.com/leibnitz27/cfr ou https://www.benf.org/other/cfr/ (oki easy & good average)
 
+All in one: https://github.com/Konloch/bytecode-viewer
+
 From android :
 	Show Java (apk) :https://play.google.com/store/apps/details?id=com.njlabs.showjava&hl=en_US&gl=US
 	
