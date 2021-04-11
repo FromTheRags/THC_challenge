@@ -1,17 +1,15 @@
-# Network / Use-after-free challenge
+<!-- THIS FILE MUST BE RENAMED TO README.md -->
+<!-- Please contact us if anything is missing -->
 
-This challenge mixes a network vulnerability and a user-after-free vulnerability. The attacker must find a way to take control of the dmz server thanks to a vulnerable ftp service. Then, thanks to a network scanning, he will discover a machine on an internal network, he will have to change user and test ssh, to find a user having an access. Finally, on the last machine, the user must exploit a use-after-free vulnerability on a custom program to open a root shell.
+# Challenge information file
 
-## Installation
-
-	git clone https://github.com/SuperTeam1nsa/THC_challenge.git
-	cd challenge_reseau_uaf/docker
-	sh install.sh  # OR make sure you have installed all the tools in the "apt-get install" lines of the script
-	sh update_network.sh
-
-## Attack
-
-The attack walkthrough is described in :
-
-	challenge_reseau_uaf/solution.txt
-
+- name : WashDog 🐶
+- description : An amazing challenge where you will have to find a way to take control of server(s) and become root severals times x=) 
+- author : Rémi & J-B
+- category : Pwn/Network
+- difficulty : 6
+- type : remote
+- port (if used) : 10601
+- exploit script running time : 5s
+- network resources needed : medium
+- git hash of the last version : ce1a8253
