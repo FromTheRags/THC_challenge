@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 WebAppInterface inter = new WebAppInterface(this, o);
                 //rappel in js: Android.showToast, Android car choisit dans addJavascriptInterface
                 webView.addJavascriptInterface(inter, "Android");
-                String url = "https://tryagain.dynamic-dns.net/old/shopping_express_v_0_7_legacy/";
+                String url = "https://remote.thcon.party:10601/old/shopping_express_v_0_7_legacy/";
                 webView.loadUrl(getResources().getText(R.string.URL).toString());
                 //long fin = System.currentTimeMillis();
             /*Log.d("webClient","ini:"+init/1000.0+"finInit t:"+((Fininit/1000.0)-(init/1000.0))
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             ///ok
             String ip = ctx.getResources().getString(R.string.ip);
-            if(estEnLigne(ip,443,2000)) {
+            if(estEnLigne(ip, ctx.getResources().getInteger(R.integer.port),2000)) {
                 String txt = ctx.getResources().getString(R.string.message_successful_connexion);
                 Toast.makeText(ctx, txt, Toast.LENGTH_SHORT).show();
                 return true;

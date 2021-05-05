@@ -5,8 +5,8 @@
     <string name="message_successful_connexion">Service connection established! :D </string>
     <string name="message_unsuccessful_connexion">Our service has connections issues :/ </string>
     <string name="error_message_no_internet">You are not connected to the Internet, try again once connected !</string>
-    <string name="URL">https://web-dev.dynamic-dns.net/</string>
-    <string name="ip">web-dev.dynamic-dns.net</string>
-    <integer name="port">443</integer>
+    <string name="URL">https://remote.thcon.party:10601/</string>
+    <string name="ip">remote.thcon.party</string>
+    <integer name="port">10601</integer>
     <string name="error_message_no_internet_but_network"> You are connected to a network without Internet...Change network !</string>
 </resources>
