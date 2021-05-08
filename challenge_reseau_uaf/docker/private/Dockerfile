@@ -17,6 +17,9 @@ RUN apk update && apk add openssh-server musl-dev build-base python3 python3-dev
 # install pwn python library
 RUN export CRYPTOGRAPHY_DONT_BUILD_RUST=1 && python3 -m pip install --use-deprecated=legacy-resolver pwn
 
+# install ssh client
+RUN apk add openssh
+
 # set default route
 COPY set_route.sh ./
 

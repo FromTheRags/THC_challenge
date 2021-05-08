@@ -17,7 +17,7 @@ RUN apk update && apk add openssh git build-base linux-pam-dev openssh linux-hea
 COPY install_vulnerable_ftpd.sh ./
 RUN sh install_vulnerable_ftpd.sh && rm -f install_vulnerable_ftpd.sh
 
-# copy script to set default route (called at container startup)
+# set default route
 COPY set_route.sh ./
 
 # add users

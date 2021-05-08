@@ -10,9 +10,6 @@ WORKDIR /root
 # apply firewall rules for ip forwarding
 COPY apply_rules.sh ./
 
-# set default route to host
-COPY set_route.sh ./
-
 # set prompt
 RUN echo "PS1='\u@firewall:\w\$ '" >> .bashrc
 

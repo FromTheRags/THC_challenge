@@ -5,18 +5,16 @@ sh generate_ssh_keys.sh
 
 # build images
 sudo docker build ./generic_alpine -t generic_alpine
+sudo docker build ./attack -t attack
 sudo docker build ./firewall -t firewall
 sudo docker build ./ftp -t ftp
 sudo docker build ./private -t private
 
 # create networks
-sudo docker network create --driver=bridge --subnet=10.42.1.0/24 --gateway=10.42.1.1 --opt com.docker.network.bridge.name=ext external
+sudo docker network create --driver=bridge --subnet=10.42.1.0/24 --gateway=10.42.1.254 --opt com.docker.network.bridge.name=ext external        # gateway to be deleted
 sudo docker network create --driver=bridge --subnet=10.42.2.0/24 --gateway=10.42.2.254 --opt com.docker.network.bridge.name=dmz dmz		# gateway to be deleted
 sudo docker network create --driver=bridge --subnet=10.42.3.0/24 --gateway=10.42.3.254 --opt com.docker.network.bridge.name=int internal	# gateway to be deleted
-sudo ip route del 10.42.2.0/24
-sudo ip route del 10.42.3.0/24
-sudo ip route add 10.42.2.0/24 via 10.42.1.2
-sudo ip route add 10.42.3.0/24 via 10.42.1.2
+sudo ip addr del 10.42.1.254/24 dev ext # delete gateway
 sudo ip addr del 10.42.2.254/24 dev dmz	# delete gateway
 sudo ip addr del 10.42.3.254/24 dev int	# delete gateway
 
@@ -24,6 +22,9 @@ sudo ip addr del 10.42.3.254/24 dev int	# delete gateway
 sudo docker create --name firewall_container --cap-add=NET_ADMIN --cap-add=NET_RAW --network external --ip 10.42.1.2 firewall
 sudo docker network connect --ip 10.42.2.2 dmz firewall_container
 sudo docker network connect --ip 10.42.3.2 internal firewall_container
+
+# create attack container
+sudo docker create --name attack_container --cap-add=NET_ADMIN --cap-add=NET_RAW --cap-add=NET_BIND_SERVICE --network external --ip 10.42.1.1 attack
 
 # create ftp container
 sudo docker create --name ftp_container --cap-add=NET_ADMIN --cap-add=NET_RAW --network dmz --ip 10.42.2.1 ftp
