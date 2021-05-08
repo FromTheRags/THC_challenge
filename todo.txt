@@ -1,0 +1,11 @@
+Reverse_web:
+OK
+à tester en vrai (raspi au pire)
+
+reseau_uaf:
+Conteneur-firewall: bypass rule <1024
+script à tester
+
+web-stega:
+script à développer 
++docker configuration
