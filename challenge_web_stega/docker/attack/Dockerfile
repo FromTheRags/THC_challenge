@@ -1,5 +1,5 @@
 # get alpine 3.13.2 32 bits
-FROM generic_alpine_42
+FROM generic_alpine_43
 
 # set password
 RUN echo "root:toto" | chpasswd
@@ -15,6 +15,8 @@ RUN apk update && apk add openssh && echo "PermitRootLogin yes" >> /etc/ssh/sshd
 
 # set default route
 COPY set_route.sh ./
+
+RUN chmod 755 set_route.sh
 
 # set rc
 RUN rc-status && touch /run/openrc/softlevel

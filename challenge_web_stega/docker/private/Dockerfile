@@ -1,5 +1,5 @@
 # get alpine 3.13.2 32 bits with useful tools
-FROM generic_alpine
+FROM generic_alpine_43
 
 # set password
 RUN echo "root:Skywalker42!" | chpasswd

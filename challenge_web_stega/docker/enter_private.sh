@@ -1,4 +1,4 @@
 #!/bin/sh
 
-sudo docker exec -it private_container /bin/bash
+sudo docker exec -it private_container_43 /bin/bash
 

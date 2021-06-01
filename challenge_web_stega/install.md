@@ -7,3 +7,10 @@ This challenge mixes web vulnerabilities and steganography. The attacker must fi
 	git clone https://github.com/SuperTeam1nsa/THC_challenge.git
 	cd challenge_web_stega/docker
 	sh install.sh  # OR make sure you have installed all the tools in the "apt-get install" lines of the script
+
+## Attack
+
+The attack walkthrough is described in :
+
+	challenge_web_stega/solution.txt
+

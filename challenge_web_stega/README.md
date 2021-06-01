@@ -4,7 +4,7 @@
 # Challenge information file
 
 - name : DarkStega 🎭
-- description : Find the 
+- description : Images can hide secrets
 - author : Rémi & J-B
 - category : Web/Stega
 - difficulty : 6

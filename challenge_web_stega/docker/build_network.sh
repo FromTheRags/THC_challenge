@@ -6,30 +6,31 @@ sh stega.sh
 cd ../..
 
 # build images
-sudo docker build ./generic_alpine -t generic_alpine
-sudo docker build ./firewall -t firewall
-sudo docker build ./web -t web
-sudo docker build ./private -t private
+sudo docker build ./generic_alpine -t generic_alpine_43
+sudo docker build ./attack -t attack_43
+sudo docker build ./firewall -t firewall_43
+sudo docker build ./web -t web_43
+sudo docker build ./private -t private_43
 
 # create networks
-sudo docker network create --driver=bridge --subnet=10.43.1.0/24 --gateway=10.43.1.1 --opt com.docker.network.bridge.name=ext external
-sudo docker network create --driver=bridge --subnet=10.43.2.0/24 --gateway=10.43.2.254 --opt com.docker.network.bridge.name=dmz dmz		# gateway to be deleted
-sudo docker network create --driver=bridge --subnet=10.43.3.0/24 --gateway=10.43.3.254 --opt com.docker.network.bridge.name=int internal	# gateway to be deleted
-sudo ip route del 10.43.2.0/24
-sudo ip route del 10.43.3.0/24
-sudo ip route add 10.43.2.0/24 via 10.43.1.2
-sudo ip route add 10.43.3.0/24 via 10.43.1.2
-sudo ip addr del 10.43.2.254/24 dev dmz	# delete gateway
-sudo ip addr del 10.43.3.254/24 dev int	# delete gateway
+sudo docker network create --driver=bridge --subnet=10.43.1.0/24 --gateway=10.43.1.254 --opt com.docker.network.bridge.name=ext_43 external_43	# gateway to be deleted
+sudo docker network create --driver=bridge --subnet=10.43.2.0/24 --gateway=10.43.2.254 --opt com.docker.network.bridge.name=dmz_43 dmz_43	# gateway to be deleted
+sudo docker network create --driver=bridge --subnet=10.43.3.0/24 --gateway=10.43.3.254 --opt com.docker.network.bridge.name=int_43 internal_43	# gateway to be deleted
+sudo ip addr del 10.43.1.254/24 dev ext_43	# delete gateway
+sudo ip addr del 10.43.2.254/24 dev dmz_43	# delete gateway
+sudo ip addr del 10.43.3.254/24 dev int_43	# delete gateway
 
 # create firewall container
-sudo docker create --name firewall_container --cap-add=NET_ADMIN --cap-add=NET_RAW --network external --ip 10.43.1.2 firewall
-sudo docker network connect --ip 10.43.2.2 dmz firewall_container
-sudo docker network connect --ip 10.43.3.2 internal firewall_container
+sudo docker create --name firewall_container_43 --cap-add=NET_ADMIN --cap-add=NET_RAW --network external_43 --ip 10.43.1.2 firewall_43
+sudo docker network connect --ip 10.43.2.2 dmz_43 firewall_container_43
+sudo docker network connect --ip 10.43.3.2 internal_43 firewall_container_43
+
+# create attack container
+sudo docker create --name attack_container_43 --cap-add=NET_ADMIN --cap-add=NET_RAW --network external_43 --ip 10.43.1.1 attack_43
 
 # create web container
-sudo docker create --name web_container --cap-add=NET_ADMIN --cap-add=NET_RAW --network dmz --ip 10.43.2.1 web
+sudo docker create --name web_container_43 --cap-add=NET_ADMIN --cap-add=NET_RAW --network dmz_43 --ip 10.43.2.1 web_43
 
 # create private container
-sudo docker create --name private_container --cap-add=NET_ADMIN --cap-add=NET_RAW --network internal --ip 10.43.3.1 private
+sudo docker create --name private_container_43 --cap-add=NET_ADMIN --cap-add=NET_RAW --network internal_43 --ip 10.43.3.1 private_43
 

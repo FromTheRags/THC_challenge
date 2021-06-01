@@ -15,3 +15,8 @@ The attack walkthrough is described in :
 
 	challenge_reseau_uaf/solution.txt
 
+A script to make the attack is available in :
+
+	challenge_reseau_uaf/exploit/exploit.sh
+
+To use it, move it to the attack container (docker cp) along with soluce.py and execute it
